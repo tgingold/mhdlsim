@@ -142,16 +142,16 @@ ArgumentParser::translate_parameters() {
    if( simulate_.size() > 1 ) {
       // If I have received more params, check from the second one on.
       for (unsigned i = 1; i < simulate_.size(); i++) {
-      if( isVHDLExtension(simulate_[i]) ) {
-         verilogFiles_.push_back( simulate_[i] );
-         simulate_.pop_back();
-         continue;
-      }
-      if( isVerilogExtension(simulate_[i]) ) {
-         verilogFiles_.push_back( simulate_[i] );
-         simulate_.pop_back();
-         continue;
-      }
+         if( isVHDLExtension(simulate_[i]) ) {
+            verilogFiles_.push_back( simulate_[i] );
+            simulate_.pop_back();
+            continue;
+         }
+         if( isVerilogExtension(simulate_[i]) ) {
+            verilogFiles_.push_back( simulate_[i] );
+            simulate_.pop_back();
+            continue;
+         }
       }
       VHDLParams_.emplace_back("-e");
       verilogParams_.emplace_back("-tvvp");
