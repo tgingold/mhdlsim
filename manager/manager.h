@@ -22,7 +22,7 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "compiler.h"
+#include "compiler_interface.h"
 #include <list>
 
 class Simulator;

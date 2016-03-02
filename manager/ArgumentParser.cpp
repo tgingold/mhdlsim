@@ -25,6 +25,7 @@
 #include <iterator>
 #include <utility>
 
+
 #define MAX_INPUT_FILE_NUM -1
 bool mixed_lang_enabled;
 

@@ -21,7 +21,7 @@
 #include "IcarusElaborator.hpp"
 #include "IcarusSimulator.hpp"
 #include "IcarusAnalyzer.hpp"
-#include "compiler.h"
+#include "compiler_interface.h"
 
 /**
  * @brief Class that represents a single compiler instance. Icarus and GHDL

@@ -1,11 +1,6 @@
 %option prefix="VL"
 %option never-interactive
 %option nounput
-%option debug
-%option verbose
-%option warn
-%option nodefault
-%option backup
 
 %{
 /*
@@ -42,7 +37,7 @@
 # include  "discipline.h"
 # include  <list>
 
-# define YY_USER_INIT reset_this_lexor();
+# define YY_USER_INIT reset_lexor();
 # define yylval VLlval
 
 # define YY_NO_INPUT
@@ -55,7 +50,6 @@
  * If the name is new, it will be added to the list.
  */
 extern YYLTYPE yylloc;
-
 
 char* strdupnew(char const *str)
 {
@@ -75,7 +69,7 @@ static const char* set_file_name(char*text)
       return path;
 }
 
-void reset_this_lexor();
+void reset_lexor();
 static void line_directive();
 static void line_directive2();
 
@@ -283,7 +277,6 @@ TU [munpf]
 <EDGES>"z1" { return K_edge_descriptor; }
 
 [a-zA-Z_][a-zA-Z0-9$_]* {
-      std::cerr << yytext << std::endl;
       int rc = lexor_keyword_code(yytext, yyleng);
       switch (rc) {
 	  case IDENTIFIER:
@@ -330,7 +323,6 @@ TU [munpf]
 	    yylval.text = 0;
 	    break;
       }
-      std::cerr << yylval.text << " " << in_module << " " << rc << std::endl;
 
 	/* Special case: If this is part of a scoped name, then check
 	   the package for identifier details. For example, if the
@@ -1606,7 +1598,7 @@ static void line_directive2()
 }
 
 extern FILE*vl_input;
-void reset_this_lexor()
+void reset_lexor()
 {
       yyrestart(vl_input);
       yylloc.first_line = 1;

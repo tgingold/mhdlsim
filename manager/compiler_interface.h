@@ -1,5 +1,5 @@
-#ifndef COMPILER_H
-#define COMPILER_H
+#ifndef COMPILER_INTERFACE_H
+#define COMPILER_INTERFACE_H
 
 /*
  * Copyright (C) 2016 Michele Castellana <michele.castellana@cern.ch>
@@ -35,4 +35,4 @@ public:
 
 };
 
-#endif /* COMPILER_H */
+#endif /* COMPILER_INTERFACE_H */

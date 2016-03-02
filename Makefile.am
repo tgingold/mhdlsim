@@ -133,15 +133,13 @@ libicarus_la_SOURCES = \
 libicarus_la_LDFLAGS = -shared -export-dynamic --unresolved-symbols=report-all
 
 parse.cc: $(srcdir)/parse.y
-	$(YACC) --verbose --graph -t -p VL -d -o $@ $<
+	$(YACC) --verbose -t -p VL -d -o $@ $<
 
 parse.h: parse.cc
 	mv parse.cc.h $@ 2>/dev/null || mv parse.hh $@
 
 lexor.cc: $(srcdir)/lexor.lex parse.h
 	$(LEX) -s -t $< > $@
-
-parse.h: parse.cc
 
 lexor_keyword.cc: $(srcdir)/lexor_keyword.gperf parse.h
 	gperf -o -i 7 -C -k 1-4,6,9,$$ -H keyword_hash -N check_identifier -t $(srcdir)/lexor_keyword.gperf > lexor_keyword.cc || (rm -f lexor_keyword.cc ; false)
@@ -159,7 +157,6 @@ mymanager_SOURCES = \
 	manager/ArgumentParser.cpp
 
 mymanager_LDADD = \
-	$(top_builddir)/libicarus.la \
 	$(top_builddir)/manager/libinterface.la \
 	$(top_builddir)/libicarus.la \
 	-lboost_program_options

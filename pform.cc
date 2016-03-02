@@ -3487,7 +3487,7 @@ void pform_add_modport_port(const struct vlltype&loc,
 
 
 FILE*vl_input = 0;
-extern void reset_this_lexor();
+extern void reset_lexor();
 
 int pform_parse(const char*path, FILE*file)
 {
@@ -3507,10 +3507,9 @@ int pform_parse(const char*path, FILE*file)
 	    vl_input = file;
       }
 
-      reset_this_lexor();
+      reset_lexor();
       error_count = 0;
       warn_count = 0;
-      VLdebug = 1;
       int rc = VLparse();
 
       if (file == 0)

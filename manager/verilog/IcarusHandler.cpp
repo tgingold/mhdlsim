@@ -16,6 +16,7 @@
  */
 
 #include "IcarusHandler.hpp"
+#include "compiler.h"
 #include <cassert>
 
 IcarusHandler::IcarusHandler() {}
@@ -50,4 +51,12 @@ IcarusHandler::add_file( const std::string& newfile ) {
 
 void
 IcarusHandler::processParams( std::vector<std::string>& ) {
+   // Set the default standard
+   lexor_keyword_mask = GN_KEYWORDS_1364_1995
+                       |GN_KEYWORDS_1364_2001
+                       |GN_KEYWORDS_1364_2001_CONFIG
+                       |GN_KEYWORDS_1364_2005
+                       |GN_KEYWORDS_1800_2005
+                       |GN_KEYWORDS_1800_2009
+                       |GN_KEYWORDS_1800_2012;
 }
