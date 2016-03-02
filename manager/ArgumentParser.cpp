@@ -44,18 +44,18 @@ ArgumentParser::vectorifyArguments( int argc, char **argv ) {
    namespace po = boost::program_options;
    po::options_description desc("Options");
    desc.add_options()
-      ("analyze,a",   po::value<bool>(&analyze_)->implicit_value(true)->zero_tokens(), "Analyze only" )
-      ("simulate,s",  po::value<std::vector<std::string>>(&simulate_)->multitoken(),   "Simulate" )
-      ("version,V",   po::value<bool>(&version_)->implicit_value(true)->zero_tokens(), "Print version number and exit." )
+      ("analyze,a",  po::value<bool>(&analyze_)->implicit_value(true)->zero_tokens(),                       "Analyze only" )
+      ("simulate,s", po::value<std::vector<std::string>>(&simulate_)->multitoken(),                         "Simulate" )
+      ("version,V",  po::value<bool>(&version_)->implicit_value(true)->zero_tokens(),                       "Print version number and exit." )
 #ifdef NDEBUG
-      ("verbose,v",   po::value<bool>(&verbose_)->implicit_value(true)->default_value(false)->zero_tokens(), "Verbose output" )
+      ("verbose,v",  po::value<bool>(&verbose_)->implicit_value(true)->default_value(false)->zero_tokens(), "Verbose output" )
 #else
-      ("verbose,v",   po::value<bool>(&verbose_)->implicit_value(true)->default_value(true)->zero_tokens(), "Verbose output" )
+      ("verbose,v",  po::value<bool>(&verbose_)->implicit_value(true)->default_value(true)->zero_tokens(),  "Verbose output" )
 #endif
       ;
    po::options_description hidden("hidden");
    hidden.add_options()
-      ("files",       po::value<std::vector<std::string>>(&tmp_file_vec),              "Files to compile" )
+      ("files",       po::value<std::vector<std::string>>(&tmp_file_vec),                                   "Files to compile" )
       ;
 
    po::options_description all_options;
@@ -72,7 +72,7 @@ ArgumentParser::vectorifyArguments( int argc, char **argv ) {
       return ParsingStatus::ERROR;
    }
 
-   if( simulate_.size() > 0 && analyze_ ) {
+   if( (simulate_.size() > 0) == analyze_ ) {
       std::cerr << "Extactly one (no more no less) parameter between analyze and simulate must be used" << std::endl;
       return ParsingStatus::ERROR;
    }
