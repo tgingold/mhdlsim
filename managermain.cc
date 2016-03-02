@@ -4,6 +4,7 @@
 #include "manager.h"
 #include "IcarusCompiler.hpp"
 #include "ArgumentParser.hpp"
+#include <boost/scoped_ptr.hpp>
 
 bool debug_elaborate;
 bool warn_ob_select = false;
@@ -110,7 +111,7 @@ bool gn_verilog_ams_flag = false;
 int main( int argc, char*argv[] )
 {
    //Compiler* vhdl = new GHDLCompiler();
-   Compiler* verilog = new IcarusCompiler();
+   boost::scoped_ptr<Compiler> verilog(new IcarusCompiler());
    ArgumentParser ap;
    switch( ap.vectorifyArguments( argc, argv ) ) {
       case CONTINUE_OK:
@@ -141,15 +142,14 @@ int main( int argc, char*argv[] )
    if( ap.getVerilogFiles().size() ) {
       verilog->add_files( ap.getVerilogFiles() );
       verilog->processParams( ap.getVerilogParams() );
-      dumbledore.add_instance( Compiler::Type::VERILOG, verilog );
+      dumbledore.add_instance( Compiler::Type::VERILOG, verilog.get() );
    }
 
    int result = dumbledore.run();
 
    // cleanup
    //delete vhdl;
-   delete verilog;
-   
+
    if( result ) {
       return EXIT_FAILURE;
    } else {
