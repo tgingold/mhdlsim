@@ -27,6 +27,8 @@ public:
     virtual ~IcarusAnalyzer();
 
     int analyze();
+private:
+    void cleanup( char ** );
 
 };
 

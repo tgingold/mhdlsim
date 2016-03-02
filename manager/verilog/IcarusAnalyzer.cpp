@@ -33,6 +33,7 @@ IcarusAnalyzer::~IcarusAnalyzer() {}
 int
 IcarusAnalyzer::analyze() {
    assert( files_.size() );
+
    // Create output file
    FILE* pp_out = fopen( OUTPUT_PP_FILENAME , "w");
    if( !pp_out ) {
@@ -41,17 +42,24 @@ IcarusAnalyzer::analyze() {
    }
    // Create file list for the preprocessor:
    // it takes a null terminated char ** as input
-   char ** file_list = new char*[files_.size() + 1]();
+   char ** file_list = new (std::nothrow) char*[files_.size() + 1]();
+   if( !file_list ) {
+      std::cerr << "No more space. Abort!" << std::endl;
+      return 1;
+   }
+
    unsigned i = 0;
    for(auto it = files_.begin(); it != files_.end(); it++, i++) {
       file_list[i] = strdup(it->c_str());
+      assert( file_list[i] );
    }
-   
+
    // Preprocessor
    reset_lexor( pp_out, file_list );
    int result = yylex();
    if ( result ) {
       std::cerr << "An error occured with yylex(). Abort!" << std::endl;
+      cleanup( file_list );
       return result;
    }
    result = fclose( pp_out );
@@ -60,9 +68,18 @@ IcarusAnalyzer::analyze() {
    pform_set_timescale(def_ts_units, def_ts_prec, 0, 0);
    result = pform_parse( OUTPUT_PP_FILENAME, NULL );
    if( result ) {
-      std::cerr << "An error occured with ppform_parse(). Abort!" << std::endl;
+      std::cerr << "An error occured with pform_parse(). Abort!" << std::endl;
+      cleanup( file_list );
       return result;
    }
 
-   // TODO: cleanup
+   cleanup( file_list );
+   return 0;
+}
+
+void
+IcarusAnalyzer::cleanup(char ** file_list) {
+   for( unsigned i = 0; i < files_.size(); i++ )
+      free( file_list[i] );
+   delete[] file_list;
 }
