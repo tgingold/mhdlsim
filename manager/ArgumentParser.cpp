@@ -44,9 +44,9 @@ ArgumentParser::vectorifyArguments( int argc, char **argv ) {
    namespace po = boost::program_options;
    po::options_description desc("Options");
    desc.add_options()
-      ("analyze,a",  po::value<bool>(&analyze_)->implicit_value(true)->zero_tokens(),                       "Analyze only" )
+      ("analyze,a",  po::value<bool>(&analyze_)->implicit_value(true)->default_value(false)->zero_tokens(), "Analyze only" )
       ("simulate,s", po::value<std::vector<std::string>>(&simulate_)->multitoken(),                         "Simulate" )
-      ("version,V",  po::value<bool>(&version_)->implicit_value(true)->zero_tokens(),                       "Print version number and exit." )
+      ("version,V",  po::value<bool>(&version_)->implicit_value(true)->default_value(false)->zero_tokens(), "Print version number and exit." )
 #ifdef NDEBUG
       ("verbose,v",  po::value<bool>(&verbose_)->implicit_value(true)->default_value(false)->zero_tokens(), "Verbose output" )
 #else
