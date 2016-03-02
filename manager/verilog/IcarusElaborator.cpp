@@ -16,15 +16,15 @@ extern bool debug_elaborate;
 
 IcarusElaborator::IcarusElaborator() {};
 IcarusElaborator::~IcarusElaborator() {};
-      
+
 // This is almost a copy/paste of elaborate from Icarus elaborate.cc for the time being
 ModuleSpec*
-IcarusElaborator::elaborate(const std::string& ent, const std::string& arch) {
+IcarusElaborator::elaborate(const std::string& , const std::string& ) {
    std::vector<struct root_elem> root_elems(roots.size());
    std::vector<struct pack_elem> pack_elems(pform_packages.size());
    bool rc = true;
    unsigned i = 0;
-   
+
    // Elaborate enum sets in $root scope.
    elaborate_rootscope_enumerations(des);
 
@@ -354,4 +354,5 @@ IcarusElaborator::elaborate(ModuleInstance& module) {
    if(!found)
       assert(false);
 
+   return nullptr;
 }
