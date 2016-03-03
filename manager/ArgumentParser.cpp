@@ -74,33 +74,33 @@ ArgumentParser::vectorifyArguments( int argc, char **argv ) {
       return ParsingStatus::ERROR;
    }
 
+   // This check is the first one because we do not need to wait for the translation
+   if( version_ ) {
+      std::cout << "Running the version " << PACKAGE_VERSION << " of " << PACKAGE_NAME << std::endl;
+      return ParsingStatus::EXIT_OK;
+   }
+
+   translate_parameters();
+
    if( (simulate_.size() > 0) == analyze_ ) {
       std::cerr << "Extactly one (no more no less) parameter between analyze and simulate must be used" << std::endl;
       return ParsingStatus::ERROR;
    }
 
-   if( tmp_file_vec.empty() ) {
-      std::cerr << "No input files " << tmp_file_vec.size() << std::endl;
-      return ParsingStatus::ERROR;
-   }
-
-   translate_parameters();
-
-   assert( (simulate_.size() > 0) ^ analyze_ );
-
    if( !checkFiles(tmp_file_vec) )
       return ParsingStatus::ERROR;
 
-   assert( getVHDLFiles().size() || getVerilogFiles().size() );
+   if( !(getVHDLFiles().size() || getVerilogFiles().size()) ) {
+      std::cerr << "No input files " << std::endl;
+      return ParsingStatus::ERROR;
+   }
 
    // This check must be after the checkFiles call
    if( getVHDLFiles().size() && getVerilogFiles().size() )
       mixed_lang_enabled = true;
 
-   if(version_) {
-      std::cout << "Running the version " << PACKAGE_VERSION << " of " << PACKAGE_NAME << std::endl;
-      return ParsingStatus::EXIT_OK;
-   }
+   assert( (simulate_.size() > 0) ^ analyze_ );
+   assert( getVHDLFiles().size() || getVerilogFiles().size() );
 
    return ParsingStatus::CONTINUE_OK;
 }
@@ -135,9 +135,11 @@ ArgumentParser::translate_parameters() {
    }
    if( analyze_ ) {
       VHDLParams_.emplace_back("-a");
+      verilogParams_.emplace_back("-E");
    }
    if( verbose_ ) {
       verilogParams_.emplace_back("-v");
+      VHDLParams_.emplace_back("-v");
    }
 
    if( simulate_.size() > 1 ) {

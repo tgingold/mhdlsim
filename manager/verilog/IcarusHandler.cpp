@@ -120,6 +120,8 @@ bool gn_verilog_ams_flag = false;
 
 const char* targ = nullptr;
 
+int e_flag = 0;
+
 IcarusHandler::IcarusHandler() {}
 
 IcarusHandler::~IcarusHandler() {}
@@ -139,18 +141,31 @@ IcarusHandler::add_file( const std::string& newfile ) {
 
 void
 IcarusHandler::processParams( std::vector<std::string>& params_ ) {
+   StringHeapLex lex_strings;
    for(auto it = params_.begin(); it != params_.end(); it++) {
-      if( !(*it).compare("-V") ) {
-         // TODO: print the correct version
+      if( !(*it).compare("-V") ) { 
+         // TODO: print  the correct version
          std::cout << "Here you should see the version informations" << std::endl;
          return;
+      }
+      if( !(*it).compare("-E") ) {
+         e_flag = 1;
+         continue;
       }
       if( !(*it).compare("-v") ) {
          verbose_flag = true;
          continue;
       }
-      if( !(*it).compare("-tvvp") ) {
-         targ = "vvp";
+      if( !(*it).substr(0, 2).compare("-s") ) {
+         std::string tmp((*it).substr(2));
+         tmp.erase(std::remove( tmp.begin(), tmp.end(), ' ' ), tmp.end());
+         roots.push_back( lex_strings.make( tmp.c_str() ) );
+         continue;
+      }
+      if( !(*it).substr(0, 2).compare("-t") ) {
+         std::string tmp = (*it).substr(2).c_str();
+         tmp.erase(std::remove( tmp.begin(), tmp.end(), ' ' ), tmp.end());
+         targ = tmp.c_str();
          continue;
       }
       // This should never happen. The only 2 possible reasons are:
