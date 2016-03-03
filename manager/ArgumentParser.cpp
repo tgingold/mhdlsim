@@ -172,7 +172,7 @@ ArgumentParser::checkFiles( std::vector<std::string>& files ) {
          it != files.end(); 
          it = std::find_if(it, files.end(), isVerilogExtension) ) {
       verilogFiles_.push_back( std::move(*it) );
-      files.erase(it);
+      it = files.erase(it);
    }
 
    if( files.size() > 0 ) {
