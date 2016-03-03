@@ -22,13 +22,13 @@
 #include <boost/program_options.hpp>
 #include "ArgumentParser.hpp"
 #include <vector>
-#include <algorithm>
-#include <iterator>
-#include <utility>
 #include "config.h"
 
 #define MAX_INPUT_FILE_NUM -1
 bool mixed_lang_enabled;
+
+const std::set<std::string> ArgumentParser::vhdlexts_ = { std::string(".vhdl"), std::string(".vhd") };
+const std::set<std::string> ArgumentParser::verilogexts_ = { std::string(".v") };
 
 ArgumentParser::ArgumentParser(bool complainAndExitOnError)
    : complainAndExitOnError_(complainAndExitOnError),
@@ -106,21 +106,15 @@ ArgumentParser::vectorifyArguments( int argc, char **argv ) {
 }
 
 bool
-isVHDLExtension(const std::string& input) {
-   static const std::set<std::string> vhdlexts = { std::string(".vhdl"), std::string(".vhd") };
-   for(auto vhdl = vhdlexts.begin(); vhdl != vhdlexts.end(); vhdl++) {
-      if( input.compare( input.length() - vhdl->length(), vhdl->length(), *vhdl ) == 0 ) {
-         return true;
+ArgumentParser::isExtension(const std::string& input, const std::set<std::string>& exts ) {
+   for( auto ext = exts.begin(); ext != exts.end(); ext++ ) {
+      try {
+         if( !strcasecmp( input.substr( input.length() - ext->length() ).c_str(), ext->c_str() ) ) {
+            return true;
+         }
+      } catch ( ... ) {
+         break;
       }
-   }
-   return false;
-}
-
-bool
-isVerilogExtension(const std::string& input) {
-   static const std::string verilogext(".v");
-   if( input.compare( input.length() - verilogext.length(), verilogext.length(), verilogext ) == 0 ) {
-      return true;
    }
    return false;
 }
@@ -145,12 +139,12 @@ ArgumentParser::translate_parameters() {
    if( simulate_.size() > 1 ) {
       // If I have received more params, check from the second one on.
       for (unsigned i = 1; i < simulate_.size(); i++) {
-         if( isVHDLExtension(simulate_[i]) ) {
+         if( isExtension( simulate_[i], ArgumentParser::vhdlexts_ ) ) {
             verilogFiles_.push_back( simulate_[i] );
             simulate_.pop_back();
             continue;
          }
-         if( isVerilogExtension(simulate_[i]) ) {
+         if( isExtension( simulate_[i], ArgumentParser::verilogexts_ ) ) {
             verilogFiles_.push_back( simulate_[i] );
             simulate_.pop_back();
             continue;
@@ -163,18 +157,20 @@ ArgumentParser::translate_parameters() {
 
 bool
 ArgumentParser::checkFiles( std::vector<std::string>& files ) {
-   for( auto it = std::find_if(files.begin(), files.end(), isVHDLExtension);
-         it != files.end(); 
-         it = std::find_if(files.begin(), files.end(), isVHDLExtension) ) {
-      VHDLFiles_.push_back( std::move(*it) );
-      it = files.erase(it);
+   for( auto it = files.begin(); it != files.end(); ) {
+      if( isExtension( *it, ArgumentParser::vhdlexts_ ) ) {
+         VHDLFiles_.push_back( std::move(*it) );
+         it = files.erase(it);
+      } else
+         it++;
    }
 
-   for( auto it = std::find_if(files.begin(), files.end(), isVerilogExtension);
-         it != files.end(); 
-         it = std::find_if(it, files.end(), isVerilogExtension) ) {
-      verilogFiles_.push_back( std::move(*it) );
-      it = files.erase(it);
+   for( auto it = files.begin(); it != files.end(); ) {
+      if( isExtension( *it, ArgumentParser::verilogexts_ ) ) {
+         verilogFiles_.push_back( std::move(*it) );
+         it = files.erase(it);
+      } else
+         it++;
    }
 
    if( files.size() > 0 ) {

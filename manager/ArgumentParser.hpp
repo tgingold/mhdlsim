@@ -47,12 +47,15 @@ class ArgumentParser {
       std::vector<std::string>& getVHDLParams();
 
    private:
+      static const std::set<std::string> vhdlexts_;
+      static const std::set<std::string> verilogexts_;
       std::vector<std::string> VHDLFiles_;
       std::vector<std::string> verilogFiles_;
-      
+
       std::vector<std::string> VHDLParams_;
       std::vector<std::string> verilogParams_;
 
+      bool isExtension( const std::string&, const std::set<std::string>& );
       void translate_parameters();
       bool checkFiles( std::vector<std::string>& files );
 
