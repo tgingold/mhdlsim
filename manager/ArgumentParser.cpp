@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <iterator>
 #include <utility>
-
+#include "config.h"
 
 #define MAX_INPUT_FILE_NUM -1
 bool mixed_lang_enabled;
@@ -98,7 +98,7 @@ ArgumentParser::vectorifyArguments( int argc, char **argv ) {
       mixed_lang_enabled = true;
 
    if(version_) {
-      std::cout << "print my_version here" << std::endl;
+      std::cout << "Running the version " << PACKAGE_VERSION << " of " << PACKAGE_NAME << std::endl;
       return ParsingStatus::EXIT_OK;
    }
 

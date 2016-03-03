@@ -138,7 +138,28 @@ IcarusHandler::add_file( const std::string& newfile ) {
 }
 
 void
-IcarusHandler::processParams( std::vector<std::string>& ) {
+IcarusHandler::processParams( std::vector<std::string>& params_ ) {
+   for(auto it = params_.begin(); it != params_.end(); it++) {
+      if( !(*it).compare("-V") ) {
+         // TODO: print the correct version
+         std::cout << "Here you should see the version informations" << std::endl;
+         return;
+      }
+      if( !(*it).compare("-v") ) {
+         verbose_flag = true;
+         continue;
+      }
+      if( !(*it).compare("-tvvp") ) {
+         targ = "vvp";
+         continue;
+      }
+      // This should never happen. The only 2 possible reasons are:
+      // 1 - The ArgumentParser did a wrong translation of parameters.
+      // 2 - There is an unhandled parameter.
+      assert(false);
+      std::cerr << "ERROR: paramenter not recognized" << std::endl;
+      abort();
+   }
    // Set the default standard
    lexor_keyword_mask = GN_KEYWORDS_1364_1995
                        |GN_KEYWORDS_1364_2001

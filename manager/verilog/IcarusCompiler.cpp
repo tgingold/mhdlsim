@@ -18,11 +18,8 @@
 
 #include "IcarusCompiler.hpp"
 
-extern bool mixed_lang_enabled;
 
-IcarusCompiler::IcarusCompiler() {
-   mixed_lang_enabled = true;
-}
+IcarusCompiler::IcarusCompiler() {}
 
 IcarusCompiler::~IcarusCompiler() {}
 

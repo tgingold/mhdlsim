@@ -20,6 +20,7 @@
  */
 
 # include  <stdio.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -57,7 +58,7 @@ extern unsigned error_count;
 extern FILE *depend_file;
 extern char dep_mode;
 
-extern int verbose_flag;
+extern bool verbose_flag;
 
 #ifdef __cplusplus
 extern "C"{
