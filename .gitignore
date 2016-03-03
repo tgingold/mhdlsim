@@ -1,28 +1,54 @@
-# Compiled Object files
+# Object files
 *.slo
 *.lo
 *.o
 *.obj
+*.ko
+*.elf
 
 # Precompiled Headers
 *.gch
 *.pch
 
-# Compiled Dynamic libraries
+# Libraries
 *.so
 *.dylib
 *.dll
-
-# Fortran module files
-*.mod
-
-# Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
+*.lo
+*.so.*
+
+# Fortran module files
+*.mod
+
+# vim
+*.swp
 
 # Executables
 *.exe
 *.out
 *.app
+*.i*86
+*.x86_64
+*.hex
+
+# Automake
+Makefile.in
+
+# Autoconf
+/autom4te.cache
+/autoscan.log
+/autoscan-*.log
+/aclocal.m4
+/compile
+/obj
+/config.h.in
+/configure
+/configure.scan
+/depcomp
+/install-sh
+/missing
+/stamp-h1
