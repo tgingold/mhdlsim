@@ -21,9 +21,9 @@
 
 #include "handler.h"
 #include <set>
-#include <map>
 #include <vector>
 #include <string>
+
 
 /**
  * @brief A class to manage the parameters and the file list.
@@ -42,14 +42,10 @@ public:
     /**
      * @brief Add param(s).
      */
-    virtual void set_param(const std::string&);
-    virtual void set_param(std::vector<std::string>& in_params);
     virtual void processParams(std::vector<std::string>&);
 
 protected:
     std::set<std::string> files_;
-    // map<param, value>
-    std::set<std::string> params_;
 };
 
 #endif /* ICARUSHANDLER_H */

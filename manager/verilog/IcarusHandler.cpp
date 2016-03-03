@@ -25,19 +25,6 @@ IcarusHandler::IcarusHandler() {}
 IcarusHandler::~IcarusHandler() {}
 
 void
-IcarusHandler::set_param( const std::string& newparam ) {
-	assert( !newparam.empty() );
-   auto result = params_.insert(newparam);
-   assert( result.second );
-}
-
-void
-IcarusHandler::set_param( std::vector<std::string>& in_params ) {
-	assert( in_params.size() );
-	params_.insert(in_params.begin(), in_params.end());
-}
-
-void
 IcarusHandler::add_files( std::vector<std::string>& in_files ) {
    assert( in_files.size() );
    files_.insert(in_files.begin(), in_files.end());

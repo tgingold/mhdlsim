@@ -27,19 +27,17 @@
  * @brief Just a class to manage the parameters and the file list.
  */
 class FileParamHandler {
-public:
-    FileParamHandler() {};
-    virtual ~FileParamHandler() {};
+   public:
+      FileParamHandler() {};
+      virtual ~FileParamHandler() {};
 
-    /**
-     * @brief Add file(s).
-     */
-    virtual void add_files( std::vector<std::string>& ) = 0;
-    virtual void add_file( const std::string& ) = 0;
-    
-    virtual void set_param( const std::string& ) = 0;
-    virtual void set_param( std::vector<std::string>& in_params ) = 0;
-    virtual void processParams( std::vector<std::string>& ) = 0;
+      /**
+       * @brief Add file(s).
+       */
+      virtual void add_files( std::vector<std::string>& ) = 0;
+      virtual void add_file( const std::string& ) = 0;
+
+      virtual void processParams( std::vector<std::string>& ) = 0;
 };
 
 #endif /* ICARUSHANDLER_H */
