@@ -17,6 +17,7 @@
  */
 
 #include "manager.h"
+#include <iostream>
 
 Manager::Manager() :
    current_comp_(nullptr) {}
@@ -26,9 +27,11 @@ Manager::~Manager() {};
 void
 Manager::add_instance(Compiler::Type type, Compiler* comp) {
    assert( comp );
-   assert( instances_.find(type) == instances_.end() );
-   instances_[type] = comp;
-   assert( instances_[type] == comp );
+   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+      assert( type != it->second );
+   }
+   instances_[comp] = type;
+   assert( instances_[comp] == type );
 }
 
 int
@@ -37,14 +40,60 @@ Manager::run( CompilationType type ) {
    int res = 0;
 
    for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
-      assert( it->second );
-      current_comp_ = it->second;
+      assert( it->first );
+      current_comp_ = it->first;
       res = current_comp_->analyze();
       // An error message has been already printed, just return.
       if( res )
          return res;
    }
    current_comp_ = nullptr;
+
+   ModuleSpec * tmp = nullptr;
+   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+      assert( it->first );
+      current_comp_ = it->first;
+      tmp = current_comp_->elaborate();
+      if( tmp )
+         break;
+   }
+   current_comp_ = nullptr;
+
+   // If we do not need any module for the elaboration
+   // we have already finished
+   if( !tmp  ) {
+      // Can we go ahead?
+      for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+         current_comp_ = it->first;
+         if ( !current_comp_->can_continue() )
+            break;
+      }
+      // At least one compiler had a problem.
+      if( !current_comp_->can_continue() ) {
+         auto it = instances_.find( reinterpret_cast<Compiler*>( current_comp_ ) );
+         assert( it != instances_.end() );
+         switch( it->second ) {
+            case Compiler::VERILOG:
+               std::cerr << "Error with the Verilog compiler." << std::endl;
+               break;
+            case Compiler::VHDL:
+               std::cerr << "Error with the VHDL compiler." << std::endl;
+               break;
+            default:
+               std::cerr << "Something bad happened, you should never see this message." << std::endl;
+         }
+         return 1;
+      }
+      // Emit code
+      for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+         current_comp_ = it->first;
+         res = current_comp_->emit_code();
+         // An error message has been already printed, just return.
+         if( res )
+            return res;
+      }
+      current_comp_ = nullptr;
+   }
 
    return 0;
 }

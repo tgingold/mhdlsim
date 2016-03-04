@@ -43,6 +43,9 @@ public:
      * @param type is instance type.
      */
     void add_instance(Compiler::Type type, Compiler* sim);
+    void add_instance(Compiler* sim, Compiler::Type type) {
+       add_instance( type, sim );
+    };
 
     /**
      * @brief Starts the simulation.
@@ -54,7 +57,7 @@ public:
 
 private:
     ///> Instances of simulators to manage.
-    std::map<Compiler::Type, Compiler*> instances_;
+    std::map<Compiler*, Compiler::Type> instances_;
 
     ///> Keep list of modules that have to be notified
     ///> when a particular signal changes.

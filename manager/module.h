@@ -90,7 +90,10 @@ class ModuleInstance {
       virtual ~ModuleInstance() {};
 
       const std::string& name() const { return name_; }
-      const ModuleInterface* iface() const { return iface_; }
+      const ModuleInterface* iface() const {
+         assert(iface_);
+         return iface_;
+      }
 
       // TODO pick either of the following, the first one may be better
       // as it is possible to assign port using named expressions, like
