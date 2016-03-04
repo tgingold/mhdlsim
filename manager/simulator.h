@@ -29,7 +29,7 @@ public:
 
     /**
      * @brief Initializes the simulator.
-     * @return 0 in case of success.
+     * @return 0 if success. Non zero value in case of failure.
      */
     virtual int initialize() = 0;
 
@@ -41,7 +41,7 @@ public:
 
     /**
      * @brief Executes the next event from the event queue.
-     * @return 0 in case of success.
+     * @return 0 if success. Non zero value in case of failure.
      */
     virtual int step_event() = 0;
 

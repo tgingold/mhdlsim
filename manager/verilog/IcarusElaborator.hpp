@@ -33,34 +33,20 @@ class IcarusElaborator : public virtual Elaborator, public virtual IcarusHandler
       IcarusElaborator();
       virtual ~IcarusElaborator();
 
-      /**
-       * @brief Performs elaboration of the required entity/arch.
-       * @param ent entity name.
-       * @param arch architecture name.
-       * @return unknown module/architecture discovered during elaboration.
-       */
-      virtual ModuleSpec* elaborate(const std::string& ent, const std::string& arch);
+      virtual ModuleSpec* elaborate(ModuleInstance* module);
 
-      /**
-       * @brief Complete the elaboration.
-       * @param module module/architecture needed to continue the elaboration.
-       * @return unknown module/architecture discovered during elaboration.
-       */
-      virtual ModuleSpec* elaborate(ModuleInstance& module);
+      bool can_continue();
 
-      /**
-       * @brief Creates an instance with a given name.
-       * This function is to be called by the Manager. It will also assign nets
-       * to ports.
-       */
-      //ModuleInstance& instantiate(const ModuleSpec& iface);
+      int emit_code();
+
+      ModuleInstance* instantiate(const ModuleSpec& iface);
 
    protected:
       ///> Modules provided by this simulator instance. They can be instantiated
       ///> as required. The string key is the name of the module, as defined
       ///> in its interface.
       std::map<const std::string, ModuleInterface> modules_;
-      
+
       IcarusElaborator::vhdl_strenght transform(ivl_drive_t type);
       void transform(ivl_variable_type_t type);
       IcarusElaborator::verilog_logic transform(vhdl_logic type);

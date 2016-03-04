@@ -46,6 +46,7 @@ public:
 
     /**
      * @brief Starts the simulation.
+     * @return 0 if success. Non zero value in case of failure.
      */
     int run( CompilationType );
 

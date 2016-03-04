@@ -29,26 +29,32 @@ public:
     virtual ~Elaborator() {};
 
     /**
-     * @brief Performs elaboration of the required entity/arch.
-     * @param ent entity name.
-     * @param arch architecture name.
-     * @return unknown module/architecture discovered during elaboration.
-     */
-    virtual ModuleSpec* elaborate(const std::string& ent, const std::string& arch) = 0;
-
-    /**
      * @brief Complete the elaboration.
      * @param module module/architecture needed to continue the elaboration.
      * @return unknown module/architecture discovered during elaboration.
+     * NULL in any other case.
      */
-    virtual ModuleSpec* elaborate(ModuleInstance& module) = 0;
+    virtual ModuleSpec* elaborate(ModuleInstance* module = NULL) = 0;
 
     /**
-     * @brief Creates an instance with a given name.
-     * This function is to be called by the Manager. It will also assign nets
-     * to ports.
+     * @brief True if there are no internal problems. False otherwise.
+     * Waiting for an Instance to complete the elaboration has to return
+     * false
      */
-    //virtual ModuleInstance& instantiate(const ModuleSpec& iface) = 0;
+    virtual bool can_continue() = 0;
+
+    /**
+     * @brief Emit code for the simulation.
+     * If something went wrong in the elaboration phase, do nothing.
+     */
+    virtual int emit_code() = 0;
+
+    /**
+     * @brief Creates an instance with the given spec.
+     * @param iface interface of the the instance to create.
+     * @return the created instance.
+     */
+    virtual ModuleInstance* instantiate(const ModuleSpec& iface) = 0;
 
 protected:
     ///> Modules provided by this simulator instance. They can be instantiated

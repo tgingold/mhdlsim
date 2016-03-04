@@ -28,7 +28,7 @@ public:
 
     /**
      * @brief Analyzes the input files.
-     * @return 0 in case of success.
+     * @return 0 if success. Non zero value in case of failure.
      */
     virtual int analyze() = 0;
 

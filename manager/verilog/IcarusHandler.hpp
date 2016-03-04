@@ -29,23 +29,17 @@
  * @brief A class to manage the parameters and the file list.
  */
 class IcarusHandler : public virtual FileParamHandler {
-public:
-    IcarusHandler();
-    virtual ~IcarusHandler();
+   public:
+      IcarusHandler();
+      virtual ~IcarusHandler();
 
-    /**
-     * @brief Add file(s).
-     */
-    virtual void add_files(std::vector<std::string>&);
-    virtual void add_file(const std::string&);
-    
-    /**
-     * @brief Add param(s).
-     */
-    virtual void processParams(std::vector<std::string>&);
+      virtual void add_files(std::vector<std::string>&);
+      virtual void add_file(const std::string&);
 
-protected:
-    std::set<std::string> files_;
+      virtual void processParams(std::vector<std::string>&);
+
+   protected:
+      std::set<std::string> files_;
 };
 
 #endif /* ICARUSHANDLER_H */

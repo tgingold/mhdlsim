@@ -35,11 +35,28 @@ extern bool debug_elaborate;
 IcarusElaborator::IcarusElaborator() {};
 IcarusElaborator::~IcarusElaborator() {};
 
-// This is almost a copy/paste of elaborate from Icarus elaborate.cc for the time being
+int
+IcarusElaborator::emit_code() {
+   return 0;
+}
+
+bool
+IcarusElaborator::can_continue() {
+   return false;
+}
+
+ModuleInstance*
+IcarusElaborator::instantiate(const ModuleSpec&) {
+   return NULL;
+}
+
 ModuleSpec*
-IcarusElaborator::elaborate(const std::string& , const std::string& ) {
-   std::vector<struct root_elem> root_elems(roots.size());
-   std::vector<struct pack_elem> pack_elems(pform_packages.size());
+IcarusElaborator::elaborate(ModuleInstance*) {
+   if( roots.empty() )
+      return nullptr;
+
+   std::vector<struct root_elem> root_elems( roots.size() );
+   std::vector<struct pack_elem> pack_elems( pform_packages.size() );
    bool rc = true;
    unsigned i = 0;
 
@@ -344,6 +361,7 @@ IcarusElaborator::transform(ivl_variable_type_t type) {
    }
 }
 
+/*
 ModuleSpec*
 IcarusElaborator::elaborate(ModuleInstance& module) {
    perm_string cur_name = perm_string::literal(module.iface()->name().c_str());
@@ -352,15 +370,10 @@ IcarusElaborator::elaborate(ModuleInstance& module) {
    // I have to remember where to put them.
    // TODO: handle the case of more instantiation of the same module
    // remove the provided module from the mdule to find
-   if(missing_modules.find(perm_string::literal(cur_name)) != missing_modules.end()) {
+   if( missing_modules.find(perm_string::literal(cur_name)) != missing_modules.end() ) {
       missing_modules.erase(missing_modules.find(cur_name));
       instances_.insert( std::pair<const std::string, ModuleInstance>(module.iface()->name(), module) );
    }
-
-   if(!missing_modules.empty()) {
-      // TODO: create the ModuleSpec and return it
-   }
-   // From now on, we can continue to 
 
    NetScope* found = NULL;
    // find the scope
@@ -374,3 +387,4 @@ IcarusElaborator::elaborate(ModuleInstance& module) {
 
    return nullptr;
 }
+*/
