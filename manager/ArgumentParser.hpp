@@ -25,15 +25,14 @@
 #include <cstring>
 #include <vector>
 
-/*
- * CONTINUE_OK -> execution can continue
- * ERROR       -> execution must finish with EXIT_FAILURE
- * EXIT_OK     -> execution must finish with EXIT_SUCCESS
- */
-enum ParsingStatus { CONTINUE_OK, ERROR, EXIT_OK };
-
 class ArgumentParser {
    public:
+      /*
+       * CONTINUE_OK -> execution can continue
+       * ERROR       -> execution must finish with EXIT_FAILURE
+       * EXIT_OK     -> execution must finish with EXIT_SUCCESS
+       */
+      enum ParsingStatus { CONTINUE_OK, ERROR, EXIT_OK };
 
       ArgumentParser( bool complainAndExitOnError = true );
       virtual ~ArgumentParser();
@@ -58,9 +57,11 @@ class ArgumentParser {
       bool isExtension( const std::string&, const std::set<std::string>& );
       void translate_parameters();
       bool checkFiles( std::vector<std::string>& files );
+      void checkErrors( std::vector<std::string>& files );
 
-      bool complainAndExitOnError_;     
+      bool complainAndExitOnError_;
       bool analyze_;
+      std::vector<std::string> elaborate_;
       std::vector<std::string> simulate_;
       bool version_;
       bool verbose_;

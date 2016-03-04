@@ -24,23 +24,22 @@
 #include "ArgumentParser.hpp"
 #include <boost/scoped_ptr.hpp>
 
-
 int main( int argc, char*argv[] )
 {
    //Compiler* vhdl = new GHDLCompiler();
-   boost::scoped_ptr<Compiler> verilog(new IcarusCompiler());
+   boost::scoped_ptr<Compiler> verilog( new IcarusCompiler() );
    ArgumentParser ap;
    switch( ap.vectorifyArguments( argc, argv ) ) {
-      case CONTINUE_OK:
+      case ArgumentParser::CONTINUE_OK:
          break;
-      case EXIT_OK:
+      case ArgumentParser::EXIT_OK:
          // Pass flags to compilers and exit.
          // I expect compilers to print something and do no computation at all
          verilog->processParams( ap.getVerilogParams() );
          //vhdl.processParam(ap.getVHDLParams());
          return EXIT_SUCCESS;
          break;
-      case ERROR:
+      case ArgumentParser::ERROR:
          // An error message has been already printed, just exit.
          return EXIT_FAILURE;
       default:
@@ -50,11 +49,11 @@ int main( int argc, char*argv[] )
 
    Manager dumbledore;
 
-   if( ap.getVHDLFiles().size() ) {
+   //if( ap.getVHDLFiles().size() ) {
       //vhdl.add_files( ap.getVHDLFiles() );
       //vhdl.processParam( ap.getVHDLParams() );
       //dumbledore.add_instance( Compiler::Type::VHDL, vhdl );
-   }
+   //}
 
    if( ap.getVerilogFiles().size() ) {
       verilog->add_files( ap.getVerilogFiles() );

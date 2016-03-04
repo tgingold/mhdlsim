@@ -40,13 +40,14 @@ ArgumentParser::ArgumentParser(bool complainAndExitOnError)
 
 ArgumentParser::~ArgumentParser() {}
 
-ParsingStatus
+ArgumentParser::ParsingStatus
 ArgumentParser::vectorifyArguments( int argc, char **argv ) {
    std::vector<std::string> tmp_file_vec;
    namespace po = boost::program_options;
    po::options_description desc("Options");
    desc.add_options()
       ("analyze,a",  po::value<bool>(&analyze_)->implicit_value(true)->default_value(false)->zero_tokens(), "Analyze only" )
+      ("elaborate,e", po::value<std::vector<std::string>>(&elaborate_)->multitoken(),                       "Analyze and elaborate only" )
       ("simulate,s", po::value<std::vector<std::string>>(&simulate_)->multitoken(),                         "Simulate" )
       ("version,V",  po::value<bool>(&version_)->implicit_value(true)->default_value(false)->zero_tokens(), "Print version number and exit." )
 #ifdef NDEBUG
@@ -71,38 +72,38 @@ ArgumentParser::vectorifyArguments( int argc, char **argv ) {
    } catch (po::error& e) {
       std::cerr << "Error in argument parsing: " << e.what() << std::endl;
       std::cerr << desc << std::endl;
-      return ParsingStatus::ERROR;
+      return ERROR;
    }
 
    // This check is the first one because we do not need to wait for the translation
    if( version_ ) {
       std::cout << "Running the version " << PACKAGE_VERSION << " of " << PACKAGE_NAME << std::endl;
-      return ParsingStatus::EXIT_OK;
+      return EXIT_OK;
    }
 
    translate_parameters();
 
-   if( (simulate_.size() > 0) == analyze_ ) {
-      std::cerr << "Extactly one (no more no less) parameter between analyze and simulate must be used" << std::endl;
-      return ParsingStatus::ERROR;
+   if( (!simulate_.empty()) + analyze_ + (!elaborate_.empty()) != 1 ) {
+      std::cerr << "Extactly one (no more no less) parameter between analyze, elaborate and simulate must be used" << std::endl;
+      return ERROR;
    }
 
    if( !checkFiles(tmp_file_vec) )
-      return ParsingStatus::ERROR;
+      return ERROR;
 
    if( !(getVHDLFiles().size() || getVerilogFiles().size()) ) {
       std::cerr << "No input files " << std::endl;
-      return ParsingStatus::ERROR;
+      return ERROR;
    }
 
    // This check must be after the checkFiles call
    if( getVHDLFiles().size() && getVerilogFiles().size() )
       mixed_lang_enabled = true;
 
-   assert( (simulate_.size() > 0) ^ analyze_ );
+   assert( (!simulate_.empty()) + analyze_ + (!elaborate_.empty()) == 1 );
    assert( getVHDLFiles().size() || getVerilogFiles().size() );
 
-   return ParsingStatus::CONTINUE_OK;
+   return CONTINUE_OK;
 }
 
 bool
@@ -136,23 +137,47 @@ ArgumentParser::translate_parameters() {
       VHDLParams_.emplace_back("-v");
    }
 
-   if( simulate_.size() > 1 ) {
-      // If I have received more params, check from the second one on.
-      for (unsigned i = 1; i < simulate_.size(); i++) {
-         if( isExtension( simulate_[i], ArgumentParser::vhdlexts_ ) ) {
-            verilogFiles_.push_back( simulate_[i] );
-            simulate_.pop_back();
-            continue;
-         }
-         if( isExtension( simulate_[i], ArgumentParser::verilogexts_ ) ) {
-            verilogFiles_.push_back( simulate_[i] );
-            simulate_.pop_back();
-            continue;
-         }
+   if( !elaborate_.empty() ) {
+      checkErrors( elaborate_ );
+      std::string tmp;
+      for( auto it = elaborate_.begin(); it != elaborate_.end(); it++ ) {
+         tmp += *it;
       }
-      VHDLParams_.emplace_back("-e");
+      assert( !tmp.empty() );
+      VHDLParams_.emplace_back("-e " + tmp);
+      verilogParams_.emplace_back("-s " + tmp);
+   }
+
+   if( !simulate_.empty() ) {
+      checkErrors( simulate_ );
+      std::string tmp;
+      for( auto it = elaborate_.begin(); it != elaborate_.end(); it++ ) {
+         tmp += *it;
+      }
+      assert( !tmp.empty() );
+      VHDLParams_.emplace_back("-e " + tmp);
+      verilogParams_.emplace_back("-s " + tmp);
       verilogParams_.emplace_back("-tvvp");
    }
+}
+
+void
+ArgumentParser::checkErrors( std::vector<std::string>& toCheck ) {
+   if( toCheck.size() <= 1 )
+      return;
+   for (unsigned i = 1; i < toCheck.size(); i++) {
+      if( isExtension( toCheck[i], ArgumentParser::vhdlexts_ ) ) {
+         verilogFiles_.push_back( toCheck[i] );
+         toCheck.pop_back();
+         continue;
+      }
+      if( isExtension( toCheck[i], ArgumentParser::verilogexts_ ) ) {
+         verilogFiles_.push_back( toCheck[i] );
+         toCheck.pop_back();
+         continue;
+      }
+   }
+   assert( toCheck.size() <= 2 );
 }
 
 bool
