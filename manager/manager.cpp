@@ -18,9 +18,7 @@
 #include "manager.h"
 
 Manager::Manager() :
-   current_sim_(nullptr),
-   current_ana_(nullptr),
-   current_elab_(nullptr) {}
+   current_comp_(nullptr) {}
 
 Manager::~Manager() {};
 
@@ -39,13 +37,13 @@ Manager::run() {
 
    for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
       assert( it->second );
-      current_ana_ = it->second;
-      res = it->second->analyze();
+      current_comp_ = it->second;
+      res = current_comp_->analyze();
       // An error message has been already printed, just return.
       if( res )
          return res;
    }
-   // no active analyzer anymore
-   current_ana_ = nullptr;
+   current_comp_ = nullptr;
+
    return 0;
 }

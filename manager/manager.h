@@ -60,12 +60,8 @@ private:
     ///> when a particular signal changes.
     std::map<Net*, std::list<ModuleInstance*> > sensitivity_;
 
-    ///> Currently active Simulator (i.e. executing code)
-    Simulator* current_sim_;
-    ///> Currently active Analyzer (i.e. executing code)
-    Analyzer* current_ana_;
-    ///> Currently active Elaborator (i.e. executing code)
-    Elaborator* current_elab_;
+    ///> Currently active Compiler (i.e. executing code)
+    Compiler* current_comp_;
 };
 
 #endif /* MANAGER_H */
