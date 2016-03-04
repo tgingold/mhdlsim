@@ -61,7 +61,7 @@ int main( int argc, char*argv[] )
       dumbledore.add_instance( Compiler::Type::VERILOG, verilog.get() );
    }
 
-   int result = dumbledore.run();
+   int result = dumbledore.run( ap.getCompType() );
 
    // cleanup
    //delete vhdl;

@@ -120,6 +120,15 @@ ArgumentParser::isExtension(const std::string& input, const std::set<std::string
    return false;
 }
 
+CompilationType
+ArgumentParser::getCompType() {
+   if( !simulate_.empty() )
+      return SIMULATION;
+   if( !elaborate_.empty() )
+      return ELABORATION;
+   return ANALYSIS;
+}
+
 void
 ArgumentParser::translate_parameters() {
    if( version_ ) {

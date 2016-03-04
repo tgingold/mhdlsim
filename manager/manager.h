@@ -21,6 +21,7 @@
 #define MANAGER_H
 
 #include "compiler_interface.h"
+#include "common_data_types.hpp"
 #include <list>
 
 class Simulator;
@@ -46,7 +47,7 @@ public:
     /**
      * @brief Starts the simulation.
      */
-    int run();
+    int run( CompilationType );
 
     // TODO interface to inspect signals, variables, control the sim flow?
 

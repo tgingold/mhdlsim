@@ -1,3 +1,6 @@
+#ifndef COMMON_DATA_TYPES_H
+#define COMMON_DATA_TYPES_H
+
 /*
  * Copyright (c) 2016 CERN
  * @author Michele Castellana <michele.castellana@cern.ch>
@@ -16,35 +19,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "manager.h"
+enum CompilationType { ANALYSIS, ELABORATION, SIMULATION };
 
-Manager::Manager() :
-   current_comp_(nullptr) {}
-
-Manager::~Manager() {};
-
-void
-Manager::add_instance(Compiler::Type type, Compiler* comp) {
-   assert( comp );
-   assert( instances_.find(type) == instances_.end() );
-   instances_[type] = comp;
-   assert( instances_[type] == comp );
-}
-
-int
-Manager::run( CompilationType type ) {
-   assert( instances_.size() );
-   int res = 0;
-
-   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
-      assert( it->second );
-      current_comp_ = it->second;
-      res = current_comp_->analyze();
-      // An error message has been already printed, just return.
-      if( res )
-         return res;
-   }
-   current_comp_ = nullptr;
-
-   return 0;
-}
+#endif /* COMMON_DATA_TYPES_H */

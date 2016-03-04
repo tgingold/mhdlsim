@@ -24,6 +24,7 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include "common_data_types.hpp"
 
 class ArgumentParser {
    public:
@@ -44,6 +45,8 @@ class ArgumentParser {
 
       std::vector<std::string>& getVerilogParams();
       std::vector<std::string>& getVHDLParams();
+
+      CompilationType getCompType();
 
    private:
       static const std::set<std::string> vhdlexts_;
