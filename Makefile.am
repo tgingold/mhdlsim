@@ -145,19 +145,19 @@ lexor.cc: $(srcdir)/lexor.lex parse.h
 lexor_keyword.cc: $(srcdir)/lexor_keyword.gperf parse.h
 	gperf -o -i 7 -C -k 1-4,6,9,$$ -H keyword_hash -N check_identifier -t $(srcdir)/lexor_keyword.gperf > lexor_keyword.cc || (rm -f lexor_keyword.cc ; false)
 
-bin_PROGRAMS = mymanager
+bin_PROGRAMS = mixedmanager
 
-mymanager_CPPFLAGS = \
+mixedmanager_CPPFLAGS = \
    -I$(top_srcdir)/manager \
    -I$(top_srcdir)/libmisc \
    -I$(top_srcdir)/manager/verilog
 
-mymanager_SOURCES = \
+mixedmanager_SOURCES = \
 	managermain.cc \
 	manager/ArgumentParser.hpp \
 	manager/ArgumentParser.cpp
 
-mymanager_LDADD = \
+mixedmanager_LDADD = \
 	$(top_builddir)/manager/libinterface.la \
 	$(top_builddir)/libicarus.la \
 	-lboost_program_options
