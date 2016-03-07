@@ -20,7 +20,8 @@
 #include <iostream>
 
 Manager::Manager() :
-   current_comp_(nullptr) {}
+   current_comp_(nullptr),
+   current_step_(ANALYSIS) {}
 
 Manager::~Manager() {};
 
@@ -35,7 +36,7 @@ Manager::add_instance(Compiler::Type type, Compiler* comp) {
 }
 
 int
-Manager::run( CompilationType type ) {
+Manager::run( CompilerStep type ) {
    assert( instances_.size() );
    int res = 0;
 

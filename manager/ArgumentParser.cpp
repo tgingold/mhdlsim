@@ -120,7 +120,7 @@ ArgumentParser::isExtension(const std::string& input, const std::set<std::string
    return false;
 }
 
-CompilationType
+CompilerStep
 ArgumentParser::getCompType() {
    if( !simulate_.empty() )
       return SIMULATION;

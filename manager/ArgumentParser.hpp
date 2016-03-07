@@ -46,7 +46,7 @@ class ArgumentParser {
       std::vector<std::string>& getVerilogParams();
       std::vector<std::string>& getVHDLParams();
 
-      CompilationType getCompType();
+      CompilerStep getCompType();
 
    private:
       static const std::set<std::string> vhdlexts_;

@@ -49,9 +49,10 @@ public:
 
     /**
      * @brief Starts the simulation.
+     * @param step is when we have to stop.
      * @return 0 if success. Non zero value in case of failure.
      */
-    int run( CompilationType );
+    int run( CompilerStep );
 
     // TODO interface to inspect signals, variables, control the sim flow?
 
@@ -65,6 +66,8 @@ private:
 
     ///> Currently active Compiler (i.e. executing code)
     Compiler* current_comp_;
+
+    CompilerStep current_step_;
 };
 
 #endif /* MANAGER_H */
