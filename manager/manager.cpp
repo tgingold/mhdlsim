@@ -35,6 +35,39 @@ Manager::add_instance(Compiler::Type type, Compiler* comp) {
    assert( instances_[comp] == type );
 }
 
+void
+Manager::error_message( const std::string& errormsg ) const {
+   assert( current_comp_  && instances_.find(current_comp_) != instances_.end() );
+   std::string phase;
+   switch( current_step_ ) {
+      case ANALYSIS:
+         phase = "analysis";
+         break;
+      case ELABORATION:
+         phase = "elaboration";
+         break;
+      case SIMULATION:
+         phase = "simulation";
+         break;
+      default:
+         assert(false);
+   }
+   assert( !phase.empty() );
+   switch( instances_.find(current_comp_)->second ) {
+      case Compiler::VERILOG:
+         std::cerr << "Error with the Verilog compiler during " << phase;
+         break;
+      case Compiler::VHDL:
+         std::cerr << "Error with the VHDL compiler during " << phase;
+         break;
+      default:
+         assert(false);
+   }
+   if( !errormsg.empty() )
+      std::cerr << ": " << errormsg;
+   std::cerr << std::endl;
+}
+
 int
 Manager::run( CompilerStep type ) {
    assert( instances_.size() );

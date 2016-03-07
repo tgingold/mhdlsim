@@ -57,6 +57,8 @@ public:
     // TODO interface to inspect signals, variables, control the sim flow?
 
 private:
+    void error_message( const std::string& errormsg = "" ) const;
+
     ///> Instances of simulators to manage.
     std::map<Compiler*, Compiler::Type> instances_;
 
