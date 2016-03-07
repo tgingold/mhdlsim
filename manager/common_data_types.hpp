@@ -19,6 +19,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enum CompilerStep { ANALYSIS, ELABORATION, SIMULATION };
+enum CompilerStep { ANALYSIS = 1, ELABORATION = 2, SIMULATION = 3 };
 
 #endif /* COMMON_DATA_TYPES_H */

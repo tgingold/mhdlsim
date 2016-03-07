@@ -58,6 +58,10 @@ public:
 
 private:
     void error_message( const std::string& errormsg = "" ) const;
+    int do_elaboration();
+    int do_analysis();
+    int do_simulation();
+    int elaborate( ModuleInstance* mod_inst = NULL );
 
     ///> Instances of simulators to manage.
     std::map<Compiler*, Compiler::Type> instances_;

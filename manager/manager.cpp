@@ -69,64 +69,116 @@ Manager::error_message( const std::string& errormsg ) const {
 }
 
 int
-Manager::run( CompilerStep type ) {
-   assert( instances_.size() );
+Manager::do_simulation() {
+   return 0;
+}
+
+int
+Manager::do_analysis() {
    int res = 0;
 
    for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
-      assert( it->first );
       current_comp_ = it->first;
       res = current_comp_->analyze();
-      // An error message has been already printed, just return.
-      if( res )
+      if( res ) {
+         error_message();
          return res;
+      }
    }
    current_comp_ = nullptr;
+   return 0;
+}
 
-   ModuleSpec * tmp = nullptr;
+int
+Manager::elaborate( ModuleInstance* mod_inst ) {
+   int res = 0;
+   ModuleInstance * found = mod_inst;
+   ModuleSpec * look_for = NULL;
+
+   do {
+      look_for = NULL;
+      auto it = instances_.begin();
+      for(; it != instances_.end() && !look_for; it++ ) {
+         current_comp_ = it->first;
+         look_for = current_comp_->elaborate( found );
+      }
+      if( look_for ) {
+         found = NULL;
+         for( it = instances_.begin(); it != instances_.end() && !found; it++ ) {
+            current_comp_ = it->first;
+            found = current_comp_->instantiate( *look_for );
+         }
+         res = elaborate( found );
+      }
+      if( res ) {
+         error_message( "Not able to find " + look_for->name() );
+         return res;
+      }
+   } while( look_for );
+
+   return 0;
+}
+
+int
+Manager::do_elaboration() {
+   int res = elaborate();
+
+   if( res ) {
+      return res;
+   }
+
+   // Can we go ahead?
    for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
-      assert( it->first );
       current_comp_ = it->first;
-      tmp = current_comp_->elaborate();
-      if( tmp )
+      if ( !current_comp_->can_continue() )
          break;
    }
+   // At least one compiler had a problem.
+   if( !current_comp_->can_continue() ) {
+      auto it = instances_.find( reinterpret_cast<Compiler*>( current_comp_ ) );
+      assert( it != instances_.end() );
+      error_message();
+      return 1;
+   }
+   // Emit code
+   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+      current_comp_ = it->first;
+      res = current_comp_->emit_code();
+      if( res ) {
+         error_message("In emit_code");
+         return res;
+      }
+   }
    current_comp_ = nullptr;
 
-   // If we do not need any module for the elaboration
-   // we have already finished
-   if( !tmp  ) {
-      // Can we go ahead?
-      for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
-         current_comp_ = it->first;
-         if ( !current_comp_->can_continue() )
-            break;
+   return 0;
+}
+
+int
+Manager::run( CompilerStep step ) {
+   assert( instances_.size() );
+   int res = 0;
+
+   if( step >= ANALYSIS ) {
+      current_step_ = ANALYSIS;
+      res = do_analysis();
+      if( res ) {
+         return res;
       }
-      // At least one compiler had a problem.
-      if( !current_comp_->can_continue() ) {
-         auto it = instances_.find( reinterpret_cast<Compiler*>( current_comp_ ) );
-         assert( it != instances_.end() );
-         switch( it->second ) {
-            case Compiler::VERILOG:
-               std::cerr << "Error with the Verilog compiler." << std::endl;
-               break;
-            case Compiler::VHDL:
-               std::cerr << "Error with the VHDL compiler." << std::endl;
-               break;
-            default:
-               std::cerr << "Something bad happened, you should never see this message." << std::endl;
-         }
-         return 1;
+   }
+   if( step >= ELABORATION ) {
+      current_step_ = ELABORATION;
+      res = do_elaboration();
+      if( res ) {
+         return res;
       }
-      // Emit code
-      for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
-         current_comp_ = it->first;
-         res = current_comp_->emit_code();
-         // An error message has been already printed, just return.
-         if( res )
-            return res;
+   }
+   if( step >= SIMULATION ) {
+      current_step_ = SIMULATION;
+      res = do_simulation();
+      if( res ) {
+         return res;
       }
-      current_comp_ = nullptr;
    }
 
    return 0;
