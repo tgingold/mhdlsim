@@ -80,6 +80,23 @@ Manager::error_message( const std::string& errormsg ) const {
 
 int
 Manager::do_simulation() {
+   int res = 0;
+
+   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+      current_comp_ = it->first;
+      res = current_comp_->initialize();
+      if( res ) {
+         error_message( "initialization failed" );
+         return res;
+      }
+   }
+
+   // For the time being the timestamp is an unsigned long long.
+   // If we change the definition we should take care of defining a zero element.
+   sim_time_t min = 0;
+   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+      current_comp_ = it->first;
+   }
    return 0;
 }
 
