@@ -21,9 +21,42 @@
 
 Manager::Manager() :
    current_comp_(nullptr),
-   current_step_(ANALYSIS) {}
+   current_step_(CompilerStep::ANALYSIS) {}
 
 Manager::~Manager() {};
+
+inline std::ostream& operator<<(std::ostream& os, const CompilerStep& step) {
+   switch (step) {
+      case CompilerStep::ANALYSIS:
+         os << "analysis";
+         break;
+      case CompilerStep::ELABORATION:
+         os << "elaboration";
+         break;
+      case CompilerStep::SIMULATION:
+         os << "simulation";
+         break;
+      default:
+         os << "unknown";
+         break;
+   }
+   return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const Compiler::Type& type) {
+   switch (type) {
+      case Compiler::VERILOG:
+         os << "Verilog";
+         break;
+      case Compiler::VHDL:
+         os << "VHDL";
+         break;
+      default:
+         os << "unknown";
+         break;
+   }
+   return os;
+};
 
 void
 Manager::add_instance(Compiler::Type type, Compiler* comp) {
@@ -38,31 +71,8 @@ Manager::add_instance(Compiler::Type type, Compiler* comp) {
 void
 Manager::error_message( const std::string& errormsg ) const {
    assert( current_comp_  && instances_.find(current_comp_) != instances_.end() );
-   std::string phase;
-   switch( current_step_ ) {
-      case ANALYSIS:
-         phase = "analysis";
-         break;
-      case ELABORATION:
-         phase = "elaboration";
-         break;
-      case SIMULATION:
-         phase = "simulation";
-         break;
-      default:
-         assert(false);
-   }
-   assert( !phase.empty() );
-   switch( instances_.find(current_comp_)->second ) {
-      case Compiler::VERILOG:
-         std::cerr << "Error with the Verilog compiler during " << phase;
-         break;
-      case Compiler::VHDL:
-         std::cerr << "Error with the VHDL compiler during " << phase;
-         break;
-      default:
-         assert(false);
-   }
+   std::cerr << "Error with the " <<  instances_.find(current_comp_)->second
+      << " compiler during " << current_step_;
    if( !errormsg.empty() )
       std::cerr << ": " << errormsg;
    std::cerr << std::endl;
@@ -124,6 +134,11 @@ Manager::do_elaboration() {
    int res = elaborate();
 
    if( res ) {
+      if ( !not_found_.empty() ) {
+         error_message( "Not able to find " + not_found_ );
+      } else {
+         error_message();
+      }
       return res;
    }
 
@@ -159,22 +174,22 @@ Manager::run( CompilerStep step ) {
    assert( instances_.size() );
    int res = 0;
 
-   if( step >= ANALYSIS ) {
-      current_step_ = ANALYSIS;
+   if( step >= CompilerStep::ANALYSIS ) {
+      current_step_ = CompilerStep::ANALYSIS;
       res = do_analysis();
       if( res ) {
          return res;
       }
    }
-   if( step >= ELABORATION ) {
-      current_step_ = ELABORATION;
+   if( step >= CompilerStep::ELABORATION ) {
+      current_step_ = CompilerStep::ELABORATION;
       res = do_elaboration();
       if( res ) {
          return res;
       }
    }
-   if( step >= SIMULATION ) {
-      current_step_ = SIMULATION;
+   if( step >= CompilerStep::SIMULATION ) {
+      current_step_ = CompilerStep::SIMULATION;
       res = do_simulation();
       if( res ) {
          return res;

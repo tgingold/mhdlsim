@@ -19,6 +19,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enum CompilerStep { ANALYSIS = 1, ELABORATION = 2, SIMULATION = 3 };
+enum class CompilerStep { ANALYSIS = 1, ELABORATION = 2, SIMULATION = 3 };
+
+inline std::ostream& operator<<(std::ostream& os, const CompilerStep& step);
 
 #endif /* COMMON_DATA_TYPES_H */

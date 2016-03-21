@@ -74,6 +74,8 @@ private:
     Compiler* current_comp_;
 
     CompilerStep current_step_;
+
+    std::string not_found_;
 };
 
 #endif /* MANAGER_H */

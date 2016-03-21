@@ -28,12 +28,14 @@
  * have to provide such interface.
  */
 class Compiler : public virtual Analyzer, public virtual Elaborator, public virtual Simulator {
-public:
-    Compiler() {};
-    virtual ~Compiler() {};
+   public:
+      Compiler() {};
+      virtual ~Compiler() {};
 
-    enum Type { VERILOG, VHDL };
+      enum Type { VERILOG, VHDL };
 
 };
+
+inline std::ostream& operator<<(std::ostream& os, const Compiler::Type& type);
 
 #endif /* COMPILER_INTERFACE_H */

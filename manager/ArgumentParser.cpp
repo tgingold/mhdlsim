@@ -123,10 +123,10 @@ ArgumentParser::isExtension(const std::string& input, const std::set<std::string
 CompilerStep
 ArgumentParser::getCompType() {
    if( !simulate_.empty() )
-      return SIMULATION;
+      return CompilerStep::SIMULATION;
    if( !elaborate_.empty() )
-      return ELABORATION;
-   return ANALYSIS;
+      return CompilerStep::ELABORATION;
+   return CompilerStep::ANALYSIS;
 }
 
 void
