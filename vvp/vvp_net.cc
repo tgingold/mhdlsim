@@ -2071,9 +2071,6 @@ template <class T> bool vector4_to_value(const vvp_vector4_t&vec, T&val)
 }
 
 template bool vector4_to_value(const vvp_vector4_t&vec, unsigned long&val);
-#ifndef UL_AND_TIME64_SAME
-template bool vector4_to_value(const vvp_vector4_t&vec, vvp_time64_t&val);
-#endif
 
 bool vector4_to_value(const vvp_vector4_t&vec, double&val, bool signed_flag)
 {

@@ -24,6 +24,7 @@
  * can look when the event in question is tripped.
  */
 
+# include  "vpi_callback.h"
 # include  "vpi_user.h"
 # include  "vpi_priv.h"
 # include  "vvp_net.h"

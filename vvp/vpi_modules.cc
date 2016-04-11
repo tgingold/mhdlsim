@@ -75,7 +75,6 @@ void vpip_load_module(const char*name)
       const char sep = '/';
 #endif
 
-      ivl_dll_t dll = 0;
       buf[0] = 0;                     /* terminate the string */
       if (strchr(name, sep)) {
 	      /* If the name has at least one directory character in
@@ -132,39 +131,8 @@ void vpip_load_module(const char*name)
 
       }
 
-      /* must have found some file that could possibly be a vpi module
-       * try to open it as a shared object.
-       */
-      dll = ivl_dlopen(buf, export_flag);
-      if(dll==0) {
-	/* hmm, this failed, let the user know what has really gone wrong */
-	fprintf(stderr,"%s:`%s' failed to open using dlopen() because:\n"
-		"    %s.\n",name,buf,dlerror());
-
-	return;
-      }
-
-
-#ifdef __MINGW32__
-	/* For this check MinGW does not want the leading underscore! */
-      void*table = ivl_dlsym(dll, "vlog_startup_routines");
-#else
-      void*table = ivl_dlsym(dll, LU "vlog_startup_routines" TU);
-#endif
-      if (table == 0) {
-	    fprintf(stderr, "%s: no vlog_startup_routines\n", name);
-	    ivl_dlclose(dll);
-	    return;
-      }
-
-	/* Add the dll to the list so it can be closed when we are done. */
-      dll_list_cnt += 1;
-      dll_list = (ivl_dll_t*)realloc(dll_list, dll_list_cnt*sizeof(ivl_dll_t));
-      dll_list[dll_list_cnt-1] = dll;
-
       vpi_mode_flag = VPI_MODE_REGISTER;
-      vlog_startup_routines_t*routines = (vlog_startup_routines_t*)table;
-      for (unsigned tmp = 0 ;  routines[tmp] ;  tmp += 1)
-	    (routines[tmp])();
+      for ( unsigned tmp = 0 ;  vlog_startup_routines[tmp] ;  ++tmp )
+         vlog_startup_routines[tmp]();
       vpi_mode_flag = VPI_MODE_NONE;
 }
