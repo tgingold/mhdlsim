@@ -32,6 +32,7 @@
 # include  <cstdlib>
 # include  "ivl_assert.h"
 # include  "ivl_alloc.h"
+# include  "ivl_target.h"
 
 struct dll_target dll_target_obj;
 
@@ -707,24 +708,6 @@ void dll_target::add_root(const NetScope *s)
 
 bool dll_target::start_design(const Design*des)
 {
-      const char*dll_path_ = des->get_flag("DLL");
-
-      dll_ = ivl_dlopen(dll_path_);
-
-      if ((dll_ == 0) && (dll_path_[0] != '/')) {
-	    size_t len = strlen(basedir) + 1 + strlen(dll_path_) + 1;
-	    char*tmp = new char[len];
-	    sprintf(tmp, "%s/%s", basedir, dll_path_);
-	    dll_ = ivl_dlopen(tmp);
-	    delete[]tmp;
-      }
-
-      if (dll_ == 0) {
-	    cerr << "error: " << dll_path_ << " failed to load." << endl;
-	    cerr << dll_path_ << ": " << dlerror() << endl;
-	    return false;
-      }
-
       stmt_cur_ = 0;
 
 	// Initialize the design object.
@@ -758,13 +741,6 @@ bool dll_target::start_design(const Design*des)
 	    add_root(*cur);
       }
 
-      target_ = (target_design_f)ivl_dlsym(dll_, LU "target_design" TU);
-      if (target_ == 0) {
-	    cerr << dll_path_ << ": error: target_design entry "
-		  "point is missing." << endl;
-	    return false;
-      }
-
       return true;
 }
 
@@ -780,7 +756,7 @@ int dll_target::end_design(const Design*)
 		  cout << " ... invoking target_design" << endl;
 	    }
 
-	    rc = (target_)(&des_);
+	    rc = target_design(&des_);
       } else {
 	    if (verbose_flag) {
 		  cout << " ... skipping target_design due to errors." << endl;
@@ -788,7 +764,6 @@ int dll_target::end_design(const Design*)
 	    rc = errors;
       }
 
-      ivl_dlclose(dll_);
       return rc;
 }
 
@@ -2826,35 +2801,11 @@ bool dll_target::signal_paths(const NetNet*net)
 
 void dll_target::test_version(const char*target_name)
 {
-      dll_ = ivl_dlopen(target_name);
-
-      if ((dll_ == 0) && (target_name[0] != '/')) {
-	    size_t len = strlen(basedir) + 1 + strlen(target_name) + 1;
-	    char*tmp = new char[len];
-	    sprintf(tmp, "%s/%s", basedir, target_name);
-	    dll_ = ivl_dlopen(tmp);
-	    delete[]tmp;
-      }
-
-      if (dll_ == 0) {
-	    cout << "\n\nUnable to load " << target_name
-		 << " for version details." << endl;
-	    return;
-      }
-
-      target_query_f target_query = (target_query_f)ivl_dlsym(dll_, LU "target_query" TU);
-      if (target_query == 0) {
-	    cerr << "Target " << target_name
-		 << " has no version hooks." << endl;
-	    return;
-      }
-
-      const char*version_string = (*target_query) ("version");
+      const char*version_string = target_query ("version");
       if (version_string == 0) {
-	    cerr << "Target " << target_name
-		 << " has no version string" << endl;
+	    cerr << "Target vvp has no version string" << endl;
 	    return;
       }
 
-      cout << target_name << ": " << version_string << endl;
+      cout << "vvp: " << version_string << endl;
 }
