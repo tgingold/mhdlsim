@@ -35,7 +35,6 @@ ArgumentParser::ArgumentParser(bool complainAndExitOnError)
    analyze_(false),
    version_(false),
    verbose_(false) {
-      mixed_lang_enabled = false;
    }
 
 ArgumentParser::~ArgumentParser() {}
@@ -53,7 +52,7 @@ ArgumentParser::vectorifyArguments( int argc, char **argv ) {
 #ifdef NDEBUG
       ("verbose,v",  po::value<bool>(&verbose_)->implicit_value(true)->default_value(false)->zero_tokens(), "Verbose output" )
 #else
-      ("verbose,v",  po::value<bool>(&verbose_)->implicit_value(true)->default_value(true)->zero_tokens(),  "Verbose output" )
+      ("verbose,v",  po::value<bool>(&verbose_)->implicit_value(false)->default_value(true)->zero_tokens(),  "Verbose output" )
 #endif
       ;
    po::options_description hidden("hidden");
@@ -108,7 +107,7 @@ ArgumentParser::vectorifyArguments( int argc, char **argv ) {
 
 bool
 ArgumentParser::isExtension(const std::string& input, const std::set<std::string>& exts ) {
-   for( auto ext = exts.begin(); ext != exts.end(); ext++ ) {
+   for( auto ext = exts.begin(); ext != exts.end(); ++ext ) {
       try {
          if( !strcasecmp( input.substr( input.length() - ext->length() ).c_str(), ext->c_str() ) ) {
             return true;
@@ -149,7 +148,7 @@ ArgumentParser::translate_parameters() {
    if( !elaborate_.empty() ) {
       checkErrors( elaborate_ );
       std::string tmp;
-      for( auto it = elaborate_.begin(); it != elaborate_.end(); it++ ) {
+      for( auto it = elaborate_.begin(); it != elaborate_.end(); ++it ) {
          tmp += *it;
       }
       assert( !tmp.empty() );
@@ -160,7 +159,7 @@ ArgumentParser::translate_parameters() {
    if( !simulate_.empty() ) {
       checkErrors( simulate_ );
       std::string tmp;
-      for( auto it = elaborate_.begin(); it != elaborate_.end(); it++ ) {
+      for( auto it = simulate_.begin(); it != simulate_.end(); ++it ) {
          tmp += *it;
       }
       assert( !tmp.empty() );
@@ -174,9 +173,9 @@ void
 ArgumentParser::checkErrors( std::vector<std::string>& toCheck ) {
    if( toCheck.size() <= 1 )
       return;
-   for (unsigned i = 1; i < toCheck.size(); i++) {
+   for (unsigned i = 1; i < toCheck.size(); ++i) {
       if( isExtension( toCheck[i], ArgumentParser::vhdlexts_ ) ) {
-         verilogFiles_.push_back( toCheck[i] );
+         VHDLFiles_.push_back( toCheck[i] );
          toCheck.pop_back();
          continue;
       }
@@ -196,7 +195,7 @@ ArgumentParser::checkFiles( std::vector<std::string>& files ) {
          VHDLFiles_.push_back( std::move(*it) );
          it = files.erase(it);
       } else
-         it++;
+         ++it;
    }
 
    for( auto it = files.begin(); it != files.end(); ) {
@@ -204,7 +203,7 @@ ArgumentParser::checkFiles( std::vector<std::string>& files ) {
          verilogFiles_.push_back( std::move(*it) );
          it = files.erase(it);
       } else
-         it++;
+         ++it;
    }
 
    if( files.size() > 0 ) {
