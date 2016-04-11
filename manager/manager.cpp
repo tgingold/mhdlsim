@@ -18,6 +18,7 @@
 
 #include "manager.h"
 #include <iostream>
+#include <stack>
 
 Manager::Manager() :
    current_comp_(nullptr),
@@ -25,7 +26,8 @@ Manager::Manager() :
 
 Manager::~Manager() {};
 
-inline std::ostream& operator<<(std::ostream& os, const CompilerStep& step) {
+inline std::ostream&
+operator<<(std::ostream& os, const CompilerStep& step) {
    switch (step) {
       case CompilerStep::ANALYSIS:
          os << "analysis";
@@ -43,7 +45,8 @@ inline std::ostream& operator<<(std::ostream& os, const CompilerStep& step) {
    return os;
 }
 
-inline std::ostream& operator<<(std::ostream& os, const Compiler::Type& type) {
+inline std::ostream&
+operator<<(std::ostream& os, const Compiler::Type& type) {
    switch (type) {
       case Compiler::VERILOG:
          os << "Verilog";
@@ -61,7 +64,7 @@ inline std::ostream& operator<<(std::ostream& os, const Compiler::Type& type) {
 void
 Manager::add_instance(Compiler::Type type, Compiler* comp) {
    assert( comp );
-   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
       assert( type != it->second );
    }
    instances_[comp] = type;
@@ -71,7 +74,7 @@ Manager::add_instance(Compiler::Type type, Compiler* comp) {
 void
 Manager::error_message( const std::string& errormsg ) const {
    assert( current_comp_  && instances_.find(current_comp_) != instances_.end() );
-   std::cerr << "Error with the " <<  instances_.find(current_comp_)->second
+   std::cerr << "<manager>: Error with the " <<  instances_.find(current_comp_)->second
       << " compiler during " << current_step_;
    if( !errormsg.empty() )
       std::cerr << ": " << errormsg;
@@ -82,7 +85,7 @@ int
 Manager::do_simulation() {
    int res = 0;
 
-   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
       current_comp_ = it->first;
       res = current_comp_->initialize();
       if( res ) {
@@ -94,7 +97,7 @@ Manager::do_simulation() {
    // For the time being the timestamp is an unsigned long long.
    // If we change the definition we should take care of defining a zero element.
    sim_time_t min = 0;
-   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
       current_comp_ = it->first;
    }
    return 0;
@@ -104,7 +107,7 @@ int
 Manager::do_analysis() {
    int res = 0;
 
-   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
       current_comp_ = it->first;
       res = current_comp_->analyze();
       if( res ) {
@@ -112,36 +115,46 @@ Manager::do_analysis() {
          return res;
       }
    }
-   current_comp_ = nullptr;
    return 0;
 }
 
 int
 Manager::elaborate( ModuleInstance* mod_inst ) {
    int res = 0;
-   ModuleInstance * found = mod_inst;
-   ModuleSpec * look_for = NULL;
+   std::stack<ModuleSpec*> look_for;
 
-   do {
-      look_for = NULL;
-      auto it = instances_.begin();
-      for(; it != instances_.end() && !look_for; it++ ) {
+   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
+      current_comp_ = it->first;
+      ModuleSpec* tmp = current_comp_->elaborate( mod_inst );
+      if( tmp )
+         look_for.push( tmp );
+   }
+   ModuleSpec* avoid_endless = nullptr;
+   while( !look_for.empty() ) {
+      if( avoid_endless == look_for.top() )
+         return 1;
+      avoid_endless = look_for.top();
+      for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
          current_comp_ = it->first;
-         look_for = current_comp_->elaborate( found );
-      }
-      if( look_for ) {
-         found = NULL;
-         for( it = instances_.begin(); it != instances_.end() && !found; it++ ) {
-            current_comp_ = it->first;
-            found = current_comp_->instantiate( *look_for );
+         switch( current_comp_->instantiate( *avoid_endless ) ) {
+            case Elaborator::FOUND:
+               {
+                  look_for.pop();
+                  res = elaborate( current_comp_->get_instance() );
+                  if ( res ) {
+                     not_found_ = avoid_endless->name() + "->" + not_found_;
+                     return res;
+                  }
+                  break;
+               }
+            case Elaborator::NOT_FOUND:
+               break;
+            case Elaborator::NEED_ANOTHER:
+               look_for.push( current_comp_->get_spec() );
+               break;
          }
-         res = elaborate( found );
       }
-      if( res ) {
-         error_message( "Not able to find " + look_for->name() );
-         return res;
-      }
-   } while( look_for );
+   }
 
    return 0;
 }
@@ -160,7 +173,7 @@ Manager::do_elaboration() {
    }
 
    // Can we go ahead?
-   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
       current_comp_ = it->first;
       if ( !current_comp_->can_continue() )
          break;
@@ -173,7 +186,7 @@ Manager::do_elaboration() {
       return 1;
    }
    // Emit code
-   for( auto it = instances_.begin(); it != instances_.end(); it++ ) {
+   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
       current_comp_ = it->first;
       res = current_comp_->emit_code();
       if( res ) {
