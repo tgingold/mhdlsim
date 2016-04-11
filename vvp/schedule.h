@@ -24,6 +24,29 @@
 # include  "array.h"
 
 /*
+ * The event_s and event_time_s structures implement the Verilog
+ * stratified event queue.
+ *
+ * The event_time_s objects are one per time step. Each time step in
+ * turn contains a list of event_s objects that are the actual events.
+ *
+ * The event_s objects are base classes for the more specific sort of
+ * event.
+ */
+struct event_s {
+      struct event_s*next;
+      virtual ~event_s() { }
+      virtual void run_run(void) =0;
+
+	// Write something about the event to stderr
+      virtual void single_step_display(void);
+
+	// Fallback new/delete
+      static void*operator new (size_t size);
+      static void operator delete(void*ptr);
+};
+
+/*
  * This causes a thread to be scheduled for execution. The schedule
  * puts the event into the event queue after any existing events for a
  * given time step. The delay is a relative time.

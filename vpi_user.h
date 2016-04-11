@@ -628,7 +628,7 @@ extern DLLEXPORT void (*vlog_startup_routines[])(void);
   /* Format a scalar a la %v. The str points to a 4byte character
      buffer. The value must be a vpiStrengthVal. */
 extern void vpip_format_strength(char*str, s_vpi_value*value, unsigned bit);
-extern void vpip_set_return_value(int value);
+void vpip_set_return_value(int value);
 extern s_vpi_vecval vpip_calc_clog2(vpiHandle arg);
 extern void vpip_make_systf_system_defined(vpiHandle ref);
 

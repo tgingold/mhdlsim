@@ -25,18 +25,18 @@
  * This method is called to compile the design file. The input is read
  * and a list of statements is created.
  */
-extern int compile_design(const char*path);
+int compile_design(const char*path);
 
 /*
  * This routine is called to check that the input file has a compatible
  * version.
  */
-extern void verify_version(char *ivl_ver, char* commit);
+void verify_version(char *ivl_ver, char* commit);
 
 /*
  * Set the default delay type for the $sdf_annotate task (min/typ/max).
  */
-extern void set_delay_selection(const char* sel);
+void set_delay_selection(const char* sel);
 
 /*
  * various functions shared by the lexor and the parser.

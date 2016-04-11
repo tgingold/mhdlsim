@@ -529,6 +529,13 @@ static void invoke_command_const(const char*txt)
       free(vtxt);
 }
 
+extern int vvp_return_value;
+
+void vpip_set_return_value(int value)
+{
+      vvp_return_value = value;
+}
+
 void stop_handler(int rc)
 {
         /* The user may be running in a non-interactive environment, so

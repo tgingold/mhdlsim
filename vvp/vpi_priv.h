@@ -41,6 +41,8 @@ class vvp_fun_arrayport;
 
 typedef struct __vpiArray* vvp_array_t;
 
+void vpi_set_vlog_info(int, char** );
+
 /*
  * This header file contains the internal definitions that the vvp
  * program uses to implement the public interface in the vpi_user.h

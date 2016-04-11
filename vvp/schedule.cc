@@ -23,6 +23,7 @@
 # include  "vpi_priv.h"
 # include  "slab.h"
 # include  "compile.h"
+# include  "vpi_callback.h"
 # include  <new>
 # include  <typeinfo>
 # include  <csignal>
@@ -40,30 +41,8 @@ unsigned long count_thread_events = 0;
   // Count the time events (A time cell created)
 unsigned long count_time_events = 0;
 
-
-
-/*
- * The event_s and event_time_s structures implement the Verilog
- * stratified event queue.
- *
- * The event_time_s objects are one per time step. Each time step in
- * turn contains a list of event_s objects that are the actual events.
- *
- * The event_s objects are base classes for the more specific sort of
- * event.
- */
-struct event_s {
-      struct event_s*next;
-      virtual ~event_s() { }
-      virtual void run_run(void) =0;
-
-	// Write something about the event to stderr
-      virtual void single_step_display(void);
-
-	// Fallback new/delete
-      static void*operator new (size_t size) { return ::new char[size]; }
-      static void operator delete(void*ptr)  { ::delete[]( (char*)ptr ); }
-};
+static void* event_s::operator new (size_t size) { return ::new char[size]; }
+static void  event_s::operator delete(void*ptr)  { ::delete[]( (char*)ptr ); }
 
 void event_s::single_step_display(void)
 {
@@ -937,11 +916,6 @@ void schedule_at_start_of_simtime(vvp_gen_event_t obj, vvp_time64_t delay)
 static vvp_time64_t schedule_time;
 vvp_time64_t schedule_simtime(void)
 { return schedule_time; }
-
-extern void vpiEndOfCompile();
-extern void vpiStartOfSim();
-extern void vpiPostsim();
-extern void vpiNextSimTime(void);
 
 /*
  * The scheduler uses this function to drain the rosync events of the

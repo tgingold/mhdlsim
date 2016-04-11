@@ -20,6 +20,7 @@
  */
 
 # include  "parse_misc.h"
+# include  "version_base.h"
 # include  "compile.h"
 # include  "delay.h"
 # include  <list>
@@ -32,6 +33,7 @@
  * These are bits in the lexor.
  */
 extern FILE*vvpin;
+extern bool have_ivl_version;
 
 vector <const char*> file_names;
 
@@ -1220,6 +1222,76 @@ delay
 	;
 
 %%
+
+void set_delay_selection(const char* sel)
+{
+      if (strcmp("TYPICAL", sel) == 0) {
+	    vpip_delay_selection = _vpiDelaySelTypical;
+      } else if (strcmp("MINIMUM", sel) == 0) {
+	    vpip_delay_selection = _vpiDelaySelMinimum;
+      } else if (strcmp("MAXIMUM", sel) == 0) {
+	    vpip_delay_selection = _vpiDelaySelMaximum;
+      } else {
+	    vpi_mcd_printf(1, "Error: Unknown delay selection \"%s\"!", sel);
+	    exit(1);
+      }
+      delete[] sel;
+}
+
+/*
+ * Verify that the input file has a compatible version.
+ */
+void verify_version(char*ivl_ver, char*commit)
+{
+      have_ivl_version = true;
+
+      if (verbose_flag) {
+	    vpi_mcd_printf(1, " ... VVP file version %s", ivl_ver);
+	    if (commit) vpi_mcd_printf(1, " %s", commit);
+	    vpi_mcd_printf(1, "\n");
+      }
+      delete[] commit;
+
+      int file_major, file_minor, file_minor2;
+      char file_extra[128];
+
+	// Old style format: 0.<major>.<minor> <extra>
+	// This also catches a potential new-new format that has
+	// another sub-minor number.
+      file_extra[0] = 0;
+      int rc = sscanf(ivl_ver, "%d.%d.%d %127s", &file_major, &file_minor, &file_minor2, file_extra);
+
+	// If it wasn't the old style format, try the new format:
+	// <major>.<minor> <extra>
+      if (rc == 2) {
+	    file_extra[0] = 0;
+	    rc = sscanf(ivl_ver, "%d.%d %127s", &file_major, &file_minor, file_extra);
+	    file_minor2 = 0;
+      }
+      delete[] ivl_ver;
+
+	// If this was the old format, the file_major will be 0. In
+	// this case it is not really what we meant, so convert to the
+	// new format.
+      if (file_major == 0) {
+	    file_major = file_minor;
+	    file_minor = file_minor2;
+	    file_minor2 = 0;
+      }
+
+      if (VERSION_MAJOR != file_major) {
+	    vpi_mcd_printf(1, "Error: VVP input file %d.%d can not "
+			   "be run with run time version %s\n",
+			   file_major, file_minor, VERSION);
+	    exit(1);
+      }
+
+      if (VERSION_MINOR < file_minor) {
+	    vpi_mcd_printf(1, "Warning: VVP input file sub version %d.%d"
+			   " is greater than the run time version %s.\n",
+			   file_major, file_minor, VERSION);
+      }
+}
 
 int compile_design(const char*path)
 {
