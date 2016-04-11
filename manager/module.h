@@ -24,13 +24,14 @@
 #include <deque>
 #include <map>
 #include <cassert>
+#include <iostream>
 
 class Net;
 
 class Port {
    public:
-      enum direction_t { IN, OUT, INOUT };
-      Port(const std::string& name, direction_t dir, int width) :
+      enum direction_t { UNKNOWN, IN, OUT, INOUT };
+      Port(const std::string& name, unsigned width = 0, direction_t dir = UNKNOWN) :
          name_(name),
          dir_(dir),
          width_(width) {};
@@ -38,62 +39,115 @@ class Port {
 
       const std::string& name() const { return name_; }
       direction_t direction() const { return dir_; }
-      int width() const { return width_; }
+      unsigned width() const { return width_; }
+      friend std::ostream& operator<<(std::ostream& os, const Port&);
+      inline bool operator==(const Port& other) {
+         return name_ == other.name_ &&
+            dir_ == other.dir_ &&
+            width_ == other.width_;
+      }
+      inline bool operator!=(const Port& other) {
+         return !(*this == other);
+      }
 
    private:
       const std::string name_;
       const direction_t dir_;
-      const int width_;
+      const unsigned width_;
 
 };
 
+inline std::ostream& operator<<(std::ostream& os, const Port::direction_t& el) {
+   switch( el ) {
+      case Port::UNKNOWN:
+         os << "unknown";
+         break;
+      case Port::IN:
+         os << "in";
+         break;
+      case Port::OUT:
+         os << "out";
+         break;
+      case Port::INOUT:
+         os << "inout";
+         break;
+   }
+   return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const Port& el) {
+   os << "name " << el.name_ << " "
+      << "width " << el.width_ << " "
+      << "direction " << el.dir_;
+   return os;
+}
+
 class ModuleInterface {
    public:
-      ModuleInterface(const std::string& name, const std::deque<Port>& ports) :
-         name_(name),
-         ports_(ports) {};
+      ModuleInterface( const std::string& name ) :
+         name_(name) {};
       virtual ~ModuleInterface() {};
 
+      void make_port( std::string& name, unsigned width = 0 ) {
+         assert( !name.empty() );
+         ports_.push_back(new Port(name, width));
+      }
       const std::string& name() const { return name_; }
-      const std::deque<Port>& ports() const { return ports_; }
-      const Port& port(int idx) const { assert(idx < ports_.size()); return ports_[idx]; }
+      std::deque<Port*>::size_type size() const { return ports_.size(); }
+      friend std::ostream& operator<<(std::ostream& os, const ModuleInterface&);
       // TODO get_default_generic/param(const std::string& ?)const
 
       // TODO accessors for variables? constants? internal signals?
 
-   private:
+   protected:
       ///> Name of the component/module.
       const std::string name_;
 
       ///> Interconnecting ports.
-      const std::deque<Port> ports_;
+      std::deque<Port*> ports_;
 
 };
 
+inline std::ostream& operator<<(std::ostream& os, const ModuleInterface& el) {
+   os << "Interface name " << el.name_ << ".";
+   if( el.ports_.size() )
+      os << " Ports are:";
+   for( auto it = el.ports_.begin(); it != el.ports_.end(); it++ ) {
+      os << std::endl << **it;
+   }
+   return os;
+}
+
 class ModuleSpec : public ModuleInterface {
    public:
-      ModuleSpec(const ModuleInterface& iface) :
-         ModuleInterface(iface) {};
+      ModuleSpec( const std::string& name ) :
+         ModuleInterface( name ) {};
       virtual ~ModuleSpec() {};
 
+      void add(Port* val) { assert(val); ports_.push_back(val); }
+      std::deque<Port*>& ports() { return ports_; }
+      Port* port(unsigned idx) { assert(idx < ports_.size()); return ports_[idx]; }
       // TODO get_generic/param
       // TODO set_generic/param
 
-   private:
 };
 
 class ModuleInstance {
    public:
-      ModuleInstance(const std::string& name, const ModuleSpec* iface) :
+      ModuleInstance(const std::string& name, ModuleSpec* iface) :
          name_(name),
          iface_(iface) {};
       virtual ~ModuleInstance() {};
 
       const std::string& name() const { return name_; }
-      const ModuleInterface* iface() const {
+      ModuleSpec* iface() const {
          assert(iface_);
          return iface_;
       }
+      std::map<const Port, Net*> connections() const {
+         return connections_;
+      }
+      friend std::ostream& operator<<(std::ostream& os, const ModuleInstance&);
 
       // TODO pick either of the following, the first one may be better
       // as it is possible to assign port using named expressions, like
@@ -112,7 +166,7 @@ class ModuleInstance {
       const std::string name_;
 
       ///> Associated component/module interface.
-      const ModuleSpec* iface_;
+      ModuleSpec* iface_;
 
       // TODO this could be also map<int, Net>
       // TODO if we keep such map, then we have to define comparison functions
@@ -122,5 +176,11 @@ class ModuleInstance {
       // TODO const std::map<???> generics_; // aka parameters
 
 };
+
+inline std::ostream& operator<<(std::ostream& os, const ModuleInstance& el) {
+   os << "Instance name " << el.name_ << ". "
+      << *el.iface_;
+   return os;
+}
 
 #endif /* MODULE_H */

@@ -22,6 +22,8 @@
 ///> Universal simulation time unit.
 typedef unsigned long long sim_time_t;
 
+class Net;
+
 class Simulator {
 public:
     Simulator() {};
@@ -37,13 +39,21 @@ public:
      * @brief Notifies the simulator that a net value has changed.
      * @param net is the net which value has just changed.
      */
-    virtual void notify(Net* net) = 0;
+    virtual void notify( Net* ) = 0;
 
     /**
      * @brief Executes the next event from the event queue.
      * @return 0 if success. Non zero value in case of failure.
      */
     virtual int step_event() = 0;
+
+    /**
+     * @brief If some tasks need to be executed after simulation,
+     * this is the good place.
+     * This function will be called also in case something wrong happened
+     * during simulation in order to cleanup.
+     */
+    virtual void end_simulation() = 0;
 
     /**
      * @brief Returns the timestamp of the next event in the event queue.
@@ -61,7 +71,7 @@ public:
      * executed.
      * @param time is the amount of time for advancement.
      */
-    virtual int advance_time(sim_time_t time) = 0;
+    virtual int advance_time( sim_time_t ) = 0;
 
 protected:
     // TODO maybe one day an interface to call subprograms? surely not for

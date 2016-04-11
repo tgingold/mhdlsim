@@ -25,8 +25,12 @@
 
 class Elaborator : public virtual FileParamHandler {
 public:
-    Elaborator() {};
+    Elaborator() :
+       spec_to_find_(nullptr),
+       instance_found_(nullptr) {};
     virtual ~Elaborator() {};
+
+    enum result { NOT_FOUND, FOUND, NEED_ANOTHER };
 
     /**
      * @brief Complete the elaboration.
@@ -34,7 +38,23 @@ public:
      * @return unknown module/architecture discovered during elaboration.
      * NULL in any other case.
      */
-    virtual ModuleSpec* elaborate(ModuleInstance* module = NULL) = 0;
+    virtual ModuleSpec* elaborate(ModuleInstance* module = nullptr) = 0;
+
+    ModuleInstance* get_instance() {
+       ModuleInstance* tmp = instance_found_;
+       if( instance_found_ ) {
+          instance_found_ = nullptr;
+       }
+       return tmp;
+    };
+
+    ModuleSpec* get_spec() {
+       ModuleSpec* tmp = spec_to_find_;
+       if( spec_to_find_ ) {
+          spec_to_find_ = nullptr;
+       }
+       return tmp;
+    };
 
     /**
      * @brief True if there are no internal problems. False otherwise.
@@ -54,17 +74,11 @@ public:
      * @param iface interface of the the instance to create.
      * @return the created instance.
      */
-    virtual ModuleInstance* instantiate(const ModuleSpec& iface) = 0;
+    virtual result instantiate(ModuleSpec& iface) = 0;
 
 protected:
-    ///> Modules provided by this simulator instance. They can be instantiated
-    ///> as required. The string key is the name of the module, as defined
-    ///> in its interface.
-    std::map<const std::string, ModuleInterface> modules_;
-
-    ///> Instances of modules handled by this simulator instance. The string key
-    ///> is the name of an instance, not the name of the module.
-    std::map<const std::string, ModuleInstance> instances_;
+    ModuleSpec* spec_to_find_;
+    ModuleInstance* instance_found_;
 
 };
 

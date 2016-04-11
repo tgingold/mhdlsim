@@ -28,20 +28,22 @@ public:
     Net(const std::string& name, int width = 1);
     virtual ~Net();
 
-    // TODO should it be possible only for the Manager?
-    virtual void set_value(const value_vec_t& v) { assert(v.size() == width()); val_ = v; }
-    virtual const value_vec_t& value() const { return val_; }
-    int width() { return val_.size(); }
-
     ///> Possible net values
     enum value_t { V0, V1, VX, VZ, VH, VL };
     typedef std::vector<value_t> value_vec_t;
+
+    // TODO should it be possible only for the Manager?
+    virtual void set_value(const value_vec_t& v) { assert(v.size() == width()); val_ = v; }
+    const std::string& name() const { return name_; }
+    virtual const value_vec_t& value() const { return val_; }
+    int width() { return val_.size(); }
 
     // TODO do we need other net types? in fact everything in the end is
     // just a bunch of bits, so probably could be represented using this class as well
 
 protected:
     value_vec_t val_;
+    const std::string name_;
 };
 
 /**
