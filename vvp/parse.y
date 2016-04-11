@@ -1,4 +1,4 @@
-
+%define api.prefix {vvp}
 %{
 /*
  * Copyright (c) 2001-2015 Stephen Williams (steve@icarus.com)
@@ -31,7 +31,7 @@
 /*
  * These are bits in the lexor.
  */
-extern FILE*yyin;
+extern FILE*vvpin;
 
 vector <const char*> file_names;
 
@@ -1223,15 +1223,15 @@ delay
 
 int compile_design(const char*path)
 {
-      yypath = path;
-      yyline = 1;
-      yyin = fopen(path, "r");
-      if (yyin == 0) {
+      vvppath = path;
+      vvpline = 1;
+      vvpin = fopen(path, "r");
+      if (vvpin == 0) {
 	    fprintf(stderr, "%s: Unable to open input file.\n", path);
 	    return -1;
       }
 
-      int rc = yyparse();
-      fclose(yyin);
+      int rc = vvpparse();
+      fclose(vvpin);
       return rc;
 }

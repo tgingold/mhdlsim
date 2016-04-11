@@ -20,9 +20,11 @@
 # include  "version_base.h"
 # include  "version_tag.h"
 # include  "vvp_priv.h"
+# include  "ivl_target.h"
 # include  <string.h>
 # include  <assert.h>
 # include  <stdlib.h>
+# include  <stdbool.h>
 # include  <sys/types.h>
 # include  <sys/stat.h>
 
@@ -46,7 +48,7 @@ static const char*version_string =
 
 FILE*vvp_out = 0;
 int vvp_errors = 0;
-unsigned show_file_line = 0;
+unsigned tgtvvp_show_file_line = 0;
 
 int debug_draw = 0;
 
@@ -187,7 +189,7 @@ int target_design(ivl_design_t des)
                                   "be positive.\n", fl_value);
                   return 1;
             }
-            show_file_line = fl_value > 0;
+            tgtvvp_show_file_line = fl_value > 0;
       }
 
 #ifdef HAVE_FOPEN64
@@ -220,8 +222,10 @@ int target_design(ivl_design_t des)
 
         /* This causes all structural records to be drawn. */
       ivl_design_roots(des, &roots, &nroots);
-      for (i = 0; i < nroots; i++)
+      for (i = 0; i < nroots; i++) {
+       fprintf(stdout, "Emit module %s\n", ivl_scope_name(roots[i]));
 	    draw_scope(roots[i], 0);
+      }
 
         /* Finish up any modpaths that are not yet emitted. */
       cleanup_modpath();

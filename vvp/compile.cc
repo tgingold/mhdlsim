@@ -1685,7 +1685,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 	    bsearch(mnem, opcode_table, opcode_count,
 		    sizeof(struct opcode_table_s), &opcode_compare);
       if (op == 0) {
-	    yyerror("Invalid opcode");
+	    vvperror("Invalid opcode");
 	    compile_errors += 1;
 	    return;
       }
@@ -1698,7 +1698,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
       code->opcode = op->opcode;
 
       if (op->argc != (opa? opa->argc : 0)) {
-	    yyerror("operand count");
+	    vvperror("operand count");
 	    compile_errors += 1;
 	    return;
       }
@@ -1714,7 +1714,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 
 		case OA_ARR_PTR:
 		  if (opa->argv[idx].ltype != L_SYMB) {
-			yyerror("operand format");
+			vvperror("operand format");
 			break;
 		  }
 
@@ -1723,7 +1723,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 
 		case OA_BIT1:
 		  if (opa->argv[idx].ltype != L_NUMB) {
-			yyerror("operand format");
+			vvperror("operand format");
 			break;
 		  }
 		  code->bit_idx[0] = opa->argv[idx].numb;
@@ -1731,7 +1731,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 
 		case OA_BIT2:
 		  if (opa->argv[idx].ltype != L_NUMB) {
-			yyerror("operand format");
+			vvperror("operand format");
 			break;
 		  }
 		  code->bit_idx[1] = opa->argv[idx].numb;
@@ -1740,7 +1740,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 		case OA_CODE_PTR:
 		case OA_CODE_PTR2:
 		  if (opa->argv[idx].ltype != L_SYMB) {
-			yyerror("operand format");
+			vvperror("operand format");
 			break;
 		  }
 
@@ -1754,7 +1754,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 		       a functor pointer, or postpone the resolution
 		       if it is not defined yet. */
 		  if (opa->argv[idx].ltype != L_SYMB) {
-			yyerror("operand format");
+			vvperror("operand format");
 			break;
 		  }
 
@@ -1766,7 +1766,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 		       a functor pointer, or postpone the resolution
 		       if it is not defined yet. */
 		  if (opa->argv[idx].ltype != L_SYMB) {
-			yyerror("operand format");
+			vvperror("operand format");
 			break;
 		  }
 
@@ -1775,7 +1775,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 
 		case OA_NUMBER:
 		  if (opa->argv[idx].ltype != L_NUMB) {
-			yyerror("operand format");
+			vvperror("operand format");
 			break;
 		  }
 
@@ -1787,7 +1787,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 		       a functor pointer, or postpone the resolution
 		       if it is not defined yet. */
 		  if (opa->argv[idx].ltype != L_SYMB) {
-			yyerror("operand format");
+			vvperror("operand format");
 			break;
 		  }
 
@@ -1796,7 +1796,7 @@ void compile_code(char*label, char*mnem, comp_operands_t opa)
 
 		case OA_STRING:
 		  if (opa->argv[idx].ltype != L_STRING) {
-			yyerror("operand format");
+			vvperror("operand format");
 			break;
 		  }
 
@@ -1904,7 +1904,7 @@ void compile_thread(char*start_sym, char*flag)
       symbol_value_t tmp = sym_get_value(sym_codespace, start_sym);
       vvp_code_t pc = reinterpret_cast<vvp_code_t>(tmp.ptr);
       if (pc == 0) {
-	    yyerror("unresolved address");
+	    vvperror("unresolved address");
 	    return;
       }
 

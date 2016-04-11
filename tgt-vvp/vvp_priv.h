@@ -42,7 +42,7 @@ extern unsigned transient_id;
  * Set to non-zero when the user wants to display file and line number
  * information for procedural statements.
  */
-extern unsigned show_file_line;
+extern unsigned tgtvvp_show_file_line;
 
 struct vector_info {
       unsigned base;

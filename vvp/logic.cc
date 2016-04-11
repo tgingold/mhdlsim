@@ -654,7 +654,7 @@ void compile_functor(char*label, char*type, unsigned width,
 	    obj = new vvp_fun_xor(width, false);
 
       } else {
-	    yyerror("invalid functor type.");
+	    vvperror("invalid functor type.");
 	    free(type);
 	    free(argv);
 	    free(label);

@@ -5845,7 +5845,7 @@ bool of_SUBSTR_VEC4(vthread_t thr, vvp_code_t cp)
 
 bool of_FILE_LINE(vthread_t, vvp_code_t cp)
 {
-      if (show_file_line) {
+      if (vvp_show_file_line) {
 	    vpiHandle handle = cp->handle;
 	    cerr << vpi_get_str(vpiFile, handle) << ":"
 	         << vpi_get(vpiLineNo, handle) << ": ";

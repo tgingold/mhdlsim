@@ -1,4 +1,4 @@
-%option prefix="yy"
+%option prefix="vvp"
 %option never-interactive
 %option nounput
 
@@ -58,27 +58,27 @@ static char* strdupnew(char const *str)
 
   /* A label is any non-blank text that appears left justified. */
 ^[.$_a-zA-Z\\][.$_a-zA-Z\\0-9<>/]* {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_LABEL; }
 
   /* String tokens are parsed here. Return as the token value the
      contents of the string without the enclosing quotes. */
 \"([^\"\\]|\\.)*\" {
-      yytext[strlen(yytext)-1] = 0;
-      yylval.text = strdupnew(yytext+1);
-      assert(yylval.text);
+      vvptext[strlen(vvptext)-1] = 0;
+      vvplval.text = strdupnew(vvptext+1);
+      assert(vvplval.text);
       return T_STRING; }
 
   /* Binary vector tokens are parsed here. The result of this is a
      string of binary 4-values in the yylval.vect.text string. This is
      preceded by an 's' if the vector is signed. */
 [1-9][0-9]*("'b"|"'sb")[01xz]+ {
-      yylval.vect.idx = strtoul(yytext, 0, 10);
-      yylval.vect.text = (char*)malloc(yylval.vect.idx + 2);
-      char*dest = yylval.vect.text;
+      vvplval.vect.idx = strtoul(vvptext, 0, 10);
+      vvplval.vect.text = (char*)malloc(vvplval.vect.idx + 2);
+      char*dest = vvplval.vect.text;
 
-      const char*bits = strchr(yytext, '\'');
+      const char*bits = strchr(vvptext, '\'');
       assert(bits);
       bits += 1;
 
@@ -90,14 +90,14 @@ static char* strdupnew(char const *str)
       assert(*bits == 'b');
       bits += 1;
       unsigned pad = 0;
-      if (strlen(bits) < yylval.vect.idx)
-	    pad = yylval.vect.idx - strlen(bits);
+      if (strlen(bits) < vvplval.vect.idx)
+	    pad = vvplval.vect.idx - strlen(bits);
 
       memset(dest, '0', pad);
-      for (unsigned idx = pad ;  idx < yylval.vect.idx ;  idx += 1)
+      for (unsigned idx = pad ;  idx < vvplval.vect.idx ;  idx += 1)
 	    dest[idx] = bits[idx-pad];
 
-      dest[yylval.vect.idx] = 0;
+      dest[vvplval.vect.idx] = 0;
       return T_VECTOR; }
 
 
@@ -245,53 +245,53 @@ static char* strdupnew(char const *str)
 "&PV" { return K_PV; }
 
 "%"[.$_/a-zA-Z0-9]+ {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_INSTR; }
 
 [0-9][0-9]* {
-      yylval.numb = strtouint64(yytext, 0, 0);
+      vvplval.numb = strtouint64(vvptext, 0, 0);
       return T_NUMBER; }
 
 "0x"[0-9a-fA-F]+ {
-      yylval.numb = strtouint64(yytext, 0, 0);
+      vvplval.numb = strtouint64(vvptext, 0, 0);
       return T_NUMBER; }
 
   /* Handle some specialized constant/literals as symbols. */
 
 "C4<"[01xz]*">" {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_SYMBOL; }
 
 "C8<"[01234567xz]*">" {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_SYMBOL; }
 
 "Cr<m"[a-f0-9]*"g"[a-f0-9]*">" {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_SYMBOL; }
 
 "S<"[0-9]*",str>" {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_SYMBOL; }
 
 "S<"[0-9]*",vec4,"[us][0-9]+">" {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_SYMBOL; }
 
 "T<"[0-9]*","[0-9]*","[us]">" {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_SYMBOL; }
 
 "W<"[0-9]*","[r]">" {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_SYMBOL; }
 
  "/INPUT"  { return K_PORT_INPUT; }
@@ -303,8 +303,8 @@ static char* strdupnew(char const *str)
   /* Symbols are pretty much what is left. They are used to refer to
      labels so the rule must match a string that a label would match. */
 [.$_a-zA-Z\\]([.$_a-zA-Z\\0-9/]|(\\.))* {
-      yylval.text = strdup(yytext);
-      assert(yylval.text);
+      vvplval.text = strdup(vvptext);
+      assert(vvplval.text);
       return T_SYMBOL; }
 
 
@@ -316,13 +316,13 @@ static char* strdupnew(char const *str)
 
 [ \t\b\r] { ; }
 
-\n { yyline += 1; }
+\n { vvpline += 1; }
 
-. { return yytext[0]; }
+. { return vvptext[0]; }
 
 %%
 
-int yywrap()
+int vvpwrap()
 {
       return -1;
 }
@@ -330,7 +330,7 @@ int yywrap()
 /*
  * Modern version of flex (>=2.5.9) can clean up the scanner data.
  */
-void destroy_lexor()
+void vvp_destroy_lexor()
 {
 # ifdef FLEX_SCANNER
 #   if YY_FLEX_MAJOR_VERSION >= 2 && YY_FLEX_MINOR_VERSION >= 5

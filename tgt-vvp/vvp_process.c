@@ -369,7 +369,7 @@ static void assign_to_lvector(ivl_lval_t lval,
  */
 void show_stmt_file_line(ivl_statement_t net, const char* desc)
 {
-      if (show_file_line) {
+      if (tgtvvp_show_file_line) {
 	      /* If the line number is not zero then the file should also
 	       * be set. It's safe to skip the assert during debug, but
 	       * the assert represents missing file/line information that
@@ -2180,17 +2180,17 @@ static int show_statement(ivl_statement_t net, ivl_scope_t sscope)
 		  unsigned saved_file_line = 0;
 		    /* This block could really represent a single statement.
 		     * If so only emit a single %file_line opcode. */
-		  if (show_file_line) {
+		  if (tgtvvp_show_file_line) {
 			if (is_delayed_or_event_assign(sscope, net) ||
 			    is_repeat_event_assign(sscope, net) ||
 			    is_wait(sscope, net) ||
 			    is_utask_call_with_args(sscope, net)) {
-			      saved_file_line = show_file_line;
-			      show_file_line = 0;
+			      saved_file_line = tgtvvp_show_file_line;
+			      tgtvvp_show_file_line = 0;
 			}
 		  }
 		  rc += show_stmt_block(net, sscope);
-		  if (saved_file_line) show_file_line = 1;
+		  if (saved_file_line) tgtvvp_show_file_line = 1;
 	    }
 	    break;
 

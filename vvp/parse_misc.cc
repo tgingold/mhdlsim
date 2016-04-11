@@ -23,12 +23,12 @@
 # include  <cstdlib>
 # include  "ivl_alloc.h"
 
-const char*yypath;
-unsigned yyline;
+const char*vvppath;
+unsigned vvpline;
 
-void yyerror(const char*msg)
+void vvperror(const char*msg)
 {
-      fprintf(stderr, "%s:%u: %s\n", yypath, yyline, msg);
+      fprintf(stderr, "%s:%u: %s\n", vvppath, vvpline, msg);
 }
 
 void symbv_init(struct symbv_s*obj)

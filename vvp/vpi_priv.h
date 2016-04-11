@@ -53,7 +53,7 @@ typedef struct __vpiArray* vvp_array_t;
 #define _vpiFileLine    0x1000003
 #define _vpiDescription 0x1000004
 
-extern bool show_file_line;
+extern bool vvp_show_file_line;
 extern bool code_is_instrumented;
 
 extern vpiHandle vpip_build_file_line(char*description,

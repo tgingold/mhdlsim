@@ -1055,7 +1055,7 @@ void schedule_simulate(void)
 		  schedule_time += ctim->delay;
 		    /* When the design is being traced (we are emitting
 		     * file/line information) also print any time changes. */
-		  if (show_file_line) {
+		  if (vvp_show_file_line) {
 			cerr << "Advancing to simulation time: "
 			     << schedule_time << endl;
 		  }

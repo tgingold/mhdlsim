@@ -41,16 +41,16 @@ extern void set_delay_selection(const char* sel);
 /*
  * various functions shared by the lexor and the parser.
  */
-extern int yylex(void);
-extern void yyerror(const char*msg);
+int vvplex(void);
+void vvperror(const char*msg);
 
-extern void destroy_lexor();
+void vvp_destroy_lexor();
 
 /*
  * This is the path of the current source file.
  */
-extern const char*yypath;
-extern unsigned yyline;
+extern const char*vvppath;
+extern unsigned vvpline;
 
 struct symb_s {
       char*text;

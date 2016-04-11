@@ -369,14 +369,14 @@ static void cmd_trace(unsigned argc, char*argv[])
       assert(argc);
       switch (argc) {
 	case 1:
-	    show_file_line = true;
+	    vvp_show_file_line = true;
 	    break;
 	default:
 	    printf("Only using the first argument to trace.\n");
 	case 2:
 	    if ((strcmp(argv[1], "on") == 0) || (strcmp(argv[1], "1") == 0)) {
-		  show_file_line = true;
-	    } else show_file_line = false;
+		  vvp_show_file_line = true;
+	    } else vvp_show_file_line = false;
 	    break;
       }
 
@@ -387,10 +387,10 @@ static void cmd_trace(unsigned argc, char*argv[])
 	           "available.\n");
 	    printf("Recompile with the -pfileline=1 flag to instrument "
 	           "the input.\n");
-	    show_file_line = false;
+	    vvp_show_file_line = false;
       } else {
 	    printf("Turning statement tracing %s.\n",
-	           show_file_line ? "on" : "off");
+	           vvp_show_file_line ? "on" : "off");
       }
 }
 
