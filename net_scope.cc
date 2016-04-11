@@ -506,7 +506,8 @@ void NetScope::add_module_port_net(NetNet*subport)
 void NetScope::add_module_port_info( unsigned idx, perm_string name, PortType::Enum ptype,
                                 unsigned long width )
 {
-      assert(type_ == MODULE);
+      assert( type_ == MODULE );
+      assert( ports_.size() > idx );
       PortInfo &info = ports_[idx];
       info.name = name;
       info.type = ptype;
