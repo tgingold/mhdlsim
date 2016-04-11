@@ -103,6 +103,14 @@ Manager::do_simulation() {
    return 0;
 }
 
+void
+Manager::end_simulation() {
+   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
+      current_comp_ = it->first;
+      current_comp_->end_simulation();
+   }
+}
+
 int
 Manager::do_analysis() {
    int res = 0;
@@ -194,8 +202,6 @@ Manager::do_elaboration() {
          return res;
       }
    }
-   current_comp_ = nullptr;
-
    return 0;
 }
 
@@ -207,6 +213,7 @@ Manager::run( CompilerStep step ) {
    if( step >= CompilerStep::ANALYSIS ) {
       current_step_ = CompilerStep::ANALYSIS;
       res = do_analysis();
+      current_comp_ = nullptr;
       if( res ) {
          return res;
       }
@@ -214,6 +221,7 @@ Manager::run( CompilerStep step ) {
    if( step >= CompilerStep::ELABORATION ) {
       current_step_ = CompilerStep::ELABORATION;
       res = do_elaboration();
+      current_comp_ = nullptr;
       if( res ) {
          return res;
       }
@@ -221,10 +229,12 @@ Manager::run( CompilerStep step ) {
    if( step >= CompilerStep::SIMULATION ) {
       current_step_ = CompilerStep::SIMULATION;
       res = do_simulation();
+      current_comp_ = nullptr;
+      end_simulation();
+      current_comp_ = nullptr;
       if( res ) {
          return res;
       }
    }
-
    return 0;
 }
