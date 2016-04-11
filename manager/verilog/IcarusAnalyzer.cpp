@@ -50,7 +50,7 @@ IcarusAnalyzer::analyze() {
    }
 
    unsigned i = 0;
-   for(auto it = files_.begin(); it != files_.end(); it++, i++) {
+   for(auto it = files_.begin(); it != files_.end(); ++it, ++i) {
       file_list[i] = strdup(it->c_str());
       assert( file_list[i] );
    }
@@ -80,7 +80,7 @@ IcarusAnalyzer::analyze() {
 
 void
 IcarusAnalyzer::cleanup(char ** file_list) {
-   for( unsigned i = 0; i < files_.size(); i++ )
+   for( unsigned i = 0; i < files_.size(); ++i )
       free( file_list[i] );
    delete[] file_list;
 }

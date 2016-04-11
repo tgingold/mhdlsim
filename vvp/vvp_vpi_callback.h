@@ -61,5 +61,4 @@ class vvp_vpi_callback {
       unsigned long array_word_;
 };
 
-
 #endif /* IVL_vvp_vpi_callback_H */

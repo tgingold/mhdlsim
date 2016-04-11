@@ -43,7 +43,7 @@ int main( int argc, char*argv[] )
          // An error message has been already printed, just exit.
          return EXIT_FAILURE;
       default:
-         std::cerr << "Something bad happened, you should never see this message." << std::endl;
+         std::cerr << "Something bad happened in argument parsing, you should never see this message." << std::endl;
          return EXIT_FAILURE;
    }
 

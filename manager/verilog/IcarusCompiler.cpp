@@ -18,7 +18,6 @@
 
 #include "IcarusCompiler.hpp"
 
-
 IcarusCompiler::IcarusCompiler() {}
 
 IcarusCompiler::~IcarusCompiler() {}
