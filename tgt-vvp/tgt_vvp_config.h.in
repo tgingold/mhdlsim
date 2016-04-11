@@ -1,5 +1,5 @@
-#ifndef IVL_vvp_config_H
-#define IVL_vvp_config_H
+#ifndef TGT_vvp_config_H
+#define TGT_vvp_config_H
 /*
  * Copyright (c) 2004-2014 Stephen Williams (steve@icarus.com)
  *
@@ -33,4 +33,4 @@
 # undef _LARGEFILE_SOURCE
 # undef _LARGEFILE64_SOURCE
 
-#endif /* IVL_vvp_config_H */
+#endif /* TGT_vvp_config_H */

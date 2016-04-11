@@ -17,7 +17,7 @@
  *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-# include  "config.h"
+# include  "vvp_config.h"
 # include  "schedule.h"
 # include  "vthread.h"
 # include  "vpi_priv.h"

@@ -1,5 +1,5 @@
-#ifndef IVL_config_H
-#define IVL_config_H
+#ifndef VVP_config_H
+#define VVP_config_H
 /*
  * Copyright (c) 2001-2014 Stephen Williams (steve@icarus.com)
  *
@@ -195,4 +195,4 @@ inline int64_t i64round(double x)
 #define TU ""
 #endif
 
-#endif /* IVL_config_H */
+#endif /* VVP_config_H */

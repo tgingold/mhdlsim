@@ -24,7 +24,5 @@ libivlpp_la_CPPFLAGS = \
 libivlpp_la_SOURCES = \
 	pplexor.c
 
-libivlpp_la_LDFLAGS = -shared -export-dynamic --unresolved-symbols=report-all
-
 pplexor.c: $(srcdir)/lexor.lex
 	$(LEX) -t $< > $@

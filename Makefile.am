@@ -18,7 +18,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = ivlpp manager
+SUBDIRS = ivlpp vpi vvp manager tgt-vvp
 
 noinst_LTLIBRARIES = libicarus.la
 
@@ -131,8 +131,6 @@ libicarus_la_SOURCES = \
 	parse.cc \
 	sys_funcs.cc
 
-libicarus_la_LDFLAGS = -shared -export-dynamic --unresolved-symbols=report-all
-
 parse.cc: $(srcdir)/parse.y
 	$(YACC) --verbose -t -p VL -d -o $@ $<
 
@@ -154,10 +152,12 @@ mixedmanager_CPPFLAGS = \
 
 mixedmanager_SOURCES = \
 	managermain.cc \
-	manager/ArgumentParser.hpp \
 	manager/ArgumentParser.cpp
 
 mixedmanager_LDADD = \
+	$(top_builddir)/vvp/libvvp.la \
 	$(top_builddir)/manager/libinterface.la \
 	$(top_builddir)/libicarus.la \
-	-lboost_program_options
+	$(top_builddir)/tgt-vvp/libvvptarget.la \
+	-lboost_program_options \
+	-ldl

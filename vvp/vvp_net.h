@@ -19,7 +19,7 @@
  *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-# include  "config.h"
+# include  "vvp_config.h"
 # include  "vpi_user.h"
 # include  "vvp_vpi_callback.h"
 # include  "permaheap.h"

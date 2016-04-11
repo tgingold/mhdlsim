@@ -18,6 +18,8 @@
 noinst_LTLIBRARIES = libinterface.la
 
 libinterface_la_CPPFLAGS = \
+	-I$(top_builddir)/vvp \
+	-I$(top_srcdir)/vvp \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/ivlpp \
 	-I$(top_srcdir)/driver \
@@ -25,12 +27,14 @@ libinterface_la_CPPFLAGS = \
 
 libinterface_la_SOURCES = \
    verilog/IcarusCompiler.cpp \
+   verilog/IcarusSimulator.cpp \
    verilog/IcarusElaborator.cpp \
    verilog/IcarusHandler.cpp \
    verilog/IcarusAnalyzer.cpp \
    manager.cpp
 
-libinterface_la_LDFLAGS = -shared -export-dynamic --unresolved-symbols=report-all
-
 libinterface_la_LIBADD = \
-	$(top_builddir)/ivlpp/libivlpp.la
+	$(top_builddir)/ivlpp/libivlpp.la \
+	$(top_builddir)/vvp/libvvp.la \
+	$(top_builddir)/vpi/libivpi.la \
+	$(top_builddir)/vvp/libvvp.la

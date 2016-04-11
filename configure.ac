@@ -8,10 +8,10 @@ LT_INIT
 
 AC_CONFIG_HEADERS( [config.h:config.h.in] )
 AC_CONFIG_HEADER(_pli_types.h)
-AC_CONFIG_HEADER(vvp/config.h)
+AC_CONFIG_HEADER(vvp/vvp_config.h)
 AC_CONFIG_HEADER(vpi/vpi_config.h)
 AC_CONFIG_HEADER(libveriuser/config.h)
-AC_CONFIG_HEADER(tgt-vvp/vvp_config.h)
+AC_CONFIG_HEADER(tgt-vvp/tgt_vvp_config.h)
 
 AC_CANONICAL_HOST
 dnl Checks for programs.
@@ -303,4 +303,4 @@ AC_MSG_ERROR(cannot configure white space in libdir: $libdir)
 fi
 AC_MSG_RESULT(ok)
 
-AC_OUTPUT(Makefile ivlpp/Makefile manager/Makefile )
+AC_OUTPUT(Makefile ivlpp/Makefile tgt-vvp/Makefile vpi/Makefile vvp/Makefile manager/Makefile )

@@ -20,7 +20,7 @@
 /*
  * This file includes functions for evaluating REAL expressions.
  */
-# include  "vvp_config.h"
+# include  "tgt_vvp_config.h"
 # include  "vvp_priv.h"
 # include  <string.h>
 # include  <stdlib.h>

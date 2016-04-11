@@ -1,178 +1,88 @@
-/* _pli_types.h.in.  Generated from configure.ac by autoheader.  */
+#ifndef PLI_TYPES_H
+#define PLI_TYPES_H
+/*
+ * Copyright (c) 2003-2014 Stephen Williams (steve@icarus.com)
+ *
+ *    This source code is free software; you can redistribute it
+ *    and/or modify it in source code form under the terms of the GNU
+ *    General Public License as published by the Free Software
+ *    Foundation; either version 2 of the License, or (at your option)
+ *    any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
 
-/* Define if building universal (internal helper macro) */
-#undef AC_APPLE_UNIVERSAL_BUILD
+# undef HAVE_INTTYPES_H
 
-/* Define to one to use the valgrind hooks */
-#undef CHECK_WITH_VALGRIND
+#ifdef HAVE_INTTYPES_H
 
-/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
-   systems. This function is required for `alloca.c' support on those systems.
-   */
-#undef CRAY_STACKSEG_END
+/*
+ * If the host environment has the stdint.h header file,
+ * then use that to size our PLI types.
+ */
+#ifndef __STDC_FORMAT_MACROS
+# define __STDC_FORMAT_MACROS
+#endif
 
-/* Define to 1 if using `alloca.c'. */
-#undef C_ALLOCA
+# include  <inttypes.h>
+typedef uint64_t PLI_UINT64;
+typedef int64_t  PLI_INT64;
+typedef uint32_t PLI_UINT32;
+typedef int32_t  PLI_INT32;
 
-/* Define to 1 if you have `alloca', as a function or macro. */
-#undef HAVE_ALLOCA
+typedef signed short   PLI_INT16;
+typedef unsigned short PLI_UINT16;
+typedef char           PLI_BYTE8;
+typedef unsigned char  PLI_UBYTE8;
 
-/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
-   */
-#undef HAVE_ALLOCA_H
+# define PLI_UINT64_FMT PRIu64
 
-/* define if the compiler supports basic C++11 syntax */
-#undef HAVE_CXX11
-
-/* Define to 1 if you have the <dlfcn.h> header file. */
-#undef HAVE_DLFCN_H
-
-/* Define to 1 if you have the <dl.h> header file. */
-#undef HAVE_DL_H
-
-/* Define to 1 if you have the `fopen64' function. */
-#undef HAVE_FOPEN64
-
-/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
-#undef HAVE_FSEEKO
-
-/* Define to 1 if you have the <getopt.h> header file. */
-#undef HAVE_GETOPT_H
-
-/* Define to 1 if you have the <inttypes.h> header file. */
-#undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the <iosfwd> header file. */
-#undef HAVE_IOSFWD
-
-/* Define to 1 if you have the `bz2' library (-lbz2). */
-#undef HAVE_LIBBZ2
-
-/* Define to 1 if you have the `history' library (-lhistory). */
-#undef HAVE_LIBHISTORY
-
-/* Define to 1 if you have the <libiberty.h> header file. */
-#undef HAVE_LIBIBERTY_H
-
-/* Define to 1 if you have the `pthread' library (-lpthread). */
-#undef HAVE_LIBPTHREAD
-
-/* Define to 1 if you have the `readline' library (-lreadline). */
-#undef HAVE_LIBREADLINE
-
-/* Define to 1 if you have the `termcap' library (-ltermcap). */
-#undef HAVE_LIBTERMCAP
-
-/* Define to 1 if you have the `z' library (-lz). */
-#undef HAVE_LIBZ
-
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
-
-/* Define to 1 if you have the <readline/history.h> header file. */
-#undef HAVE_READLINE_HISTORY_H
-
-/* Define to 1 if you have the <readline/readline.h> header file. */
-#undef HAVE_READLINE_READLINE_H
-
-/* Define to 1 if you have the `realpath' function. */
-#undef HAVE_REALPATH
-
-/* Define to 1 if you have the <stdint.h> header file. */
-#undef HAVE_STDINT_H
-
-/* Define to 1 if you have the <stdlib.h> header file. */
-#undef HAVE_STDLIB_H
-
-/* Define to 1 if you have the <strings.h> header file. */
-#undef HAVE_STRINGS_H
-
-/* Define to 1 if you have the <string.h> header file. */
-#undef HAVE_STRING_H
-
-/* Define to 1 if you have the <sys/resource.h> header file. */
-#undef HAVE_SYS_RESOURCE_H
-
-/* Define to 1 if you have the <sys/stat.h> header file. */
-#undef HAVE_SYS_STAT_H
-
-/* Define to 1 if you have the <sys/types.h> header file. */
-#undef HAVE_SYS_TYPES_H
-
-/* Define to 1 if you have the <sys/wait.h> header file. */
-#undef HAVE_SYS_WAIT_H
-
-/* The times system call is available in the host operating system. */
-#undef HAVE_TIMES
-
-/* Define to 1 if you have the <unistd.h> header file. */
-#undef HAVE_UNISTD_H
-
-/* Host operating system is Linux. */
-#undef LINUX
-
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
-#undef LT_OBJDIR
-
-/* Name of package */
-#undef PACKAGE
-
-/* Define to the address where bug reports for this package should be sent. */
-#undef PACKAGE_BUGREPORT
-
-/* Define to the full name of this package. */
-#undef PACKAGE_NAME
-
-/* Define to the full name and version of this package. */
-#undef PACKAGE_STRING
-
-/* Define to the one symbol short name of this package. */
-#undef PACKAGE_TARNAME
-
-/* Define to the home page for this package. */
-#undef PACKAGE_URL
-
-/* Define to the version of this package. */
-#undef PACKAGE_VERSION
-
-/* The size of `unsigned', as computed by sizeof. */
-#undef SIZEOF_UNSIGNED
-
-/* The size of `unsigned long', as computed by sizeof. */
-#undef SIZEOF_UNSIGNED_LONG
-
-/* The size of `unsigned long long', as computed by sizeof. */
-#undef SIZEOF_UNSIGNED_LONG_LONG
-
-/* If using the C implementation of alloca, define if you know the
-   direction of stack growth for your system; otherwise it will be
-   automatically deduced at runtime.
-	STACK_DIRECTION > 0 => grows toward higher addresses
-	STACK_DIRECTION < 0 => grows toward lower addresses
-	STACK_DIRECTION = 0 => direction of growth unknown */
-#undef STACK_DIRECTION
-
-/* Define to 1 if you have the ANSI C header files. */
-#undef STDC_HEADERS
-
-/* Version number of package */
-#undef VERSION
-
-/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
-   significant byte first (like Motorola and SPARC, unlike Intel). */
-#if defined AC_APPLE_UNIVERSAL_BUILD
-# if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN 1
-# endif
 #else
-# ifndef WORDS_BIGENDIAN
-#  undef WORDS_BIGENDIAN
+
+/*
+ * If we do not have the c99 stdint.h header file, then use
+ * configure detection to guess the pli types ourselves.
+ */
+
+# define SIZEOF_UNSIGNED_LONG_LONG 8
+# define SIZEOF_UNSIGNED_LONG 8
+# define SIZEOF_UNSIGNED 4
+
+#if SIZEOF_UNSIGNED >= 8
+typedef unsigned PLI_UINT64;
+typedef int      PLI_INT64;
+# define PLI_UINT64_FMT "u"
+#else
+# if SIZEOF_UNSIGNED_LONG >= 8
+typedef unsigned long PLI_UINT64;
+typedef          long PLI_INT64;
+#  define PLI_UINT64_FMT "lu"
+# else
+#  if SIZEOF_UNSIGNED_LONG_LONG > SIZEOF_UNSIGNED_LONG
+typedef unsigned long long PLI_UINT64;
+typedef          long long PLI_INT64;
+#   define PLI_UINT64_FMT "llu"
+#  else
+typedef unsigned long PLI_UINT64;
+typedef          long PLI_INT64;
+#   define PLI_UINT64_FMT "lu"
+#  endif
 # endif
 #endif
 
-/* Indicates LFS (i.e. the ability to create files larger than 2 GiB on 32-bit
-   operating systems). */
-#undef _LARGEFILE_SOURCE
+typedef signed int     PLI_INT32;
+typedef unsigned int   PLI_UINT32;
+typedef signed short   PLI_INT16;
+typedef unsigned short PLI_UINT16;
+typedef char           PLI_BYTE8;
+typedef unsigned char  PLI_UBYTE8;
+#endif
 
-/* Define to `unsigned int' if <sys/types.h> does not define. */
-#undef size_t
+#endif /* PLI_TYPES_H */

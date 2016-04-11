@@ -19,7 +19,7 @@
  *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-# include  "vvp_config.h"
+# include  "tgt_vvp_config.h"
 # include  "ivl_target.h"
 # include  <stdio.h>
 
