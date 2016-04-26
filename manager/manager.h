@@ -23,6 +23,7 @@
 #include "compiler_interface.h"
 #include "common_data_types.hpp"
 #include <list>
+#include <string>
 
 class Simulator;
 class Net;
@@ -64,6 +65,8 @@ private:
     int do_simulation();
     void end_simulation();
     int elaborate( ModuleInstance* mod_inst = nullptr );
+    void add_not_found( const std::string& );
+    bool set_variable( sim_time_t& );
 
     ///> Instances of simulators to manage.
     std::map<Compiler*, Compiler::Type> instances_;

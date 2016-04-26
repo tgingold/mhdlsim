@@ -68,7 +68,6 @@ Manager::add_instance(Compiler::Type type, Compiler* comp) {
       assert( type != it->second );
    }
    instances_[comp] = type;
-   assert( instances_[comp] == type );
 }
 
 void
@@ -79,6 +78,28 @@ Manager::error_message( const std::string& errormsg ) const {
    if( !errormsg.empty() )
       std::cerr << ": " << errormsg;
    std::cerr << std::endl;
+}
+
+bool
+Manager::set_variable( sim_time_t& min ) {
+   bool other_events = false;
+   std::vector<Compiler*> tie;
+   min = Compiler::maxSimValue();
+   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
+      other_events |= it->first->other_event();
+      if( min > it->first->next_event() ) {
+         current_comp_ = it->first;
+         min = it->first->next_event();
+         tie.erase(tie.begin(), tie.end());
+      }
+      else if( min == it->first->next_event() ) {
+         tie.push_back(it->first);
+      }
+   }
+   if( other_events && !tie.empty() ) {
+      // TODO: Break the tie...for the moment it can be left like that.
+   }
+   return other_events;
 }
 
 int
@@ -93,12 +114,30 @@ Manager::do_simulation() {
          return res;
       }
    }
+   current_comp_ = nullptr;
 
    // For the time being the timestamp is an unsigned long long.
    // If we change the definition we should take care of defining a zero element.
-   sim_time_t min = 0;
-   for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
-      current_comp_ = it->first;
+   sim_time_t min;
+   Simulator::outcome result = Simulator::OK;
+   while( set_variable(min) ) {
+      result = current_comp_->step_event();
+      switch( result ) {
+         case Simulator::OK:
+            // Do nothing
+            break;
+         case Simulator::ERROR:
+            error_message( "At time " + min );
+            return 1;
+            break;
+         case Simulator::CHANGED:
+            // TODO: advice the other simulators
+            break;
+         default:
+            error_message( "Function step_event() returned a wrong value" );
+            return 1;
+            break;
+      }
    }
    return 0;
 }
@@ -126,6 +165,15 @@ Manager::do_analysis() {
    return 0;
 }
 
+void
+Manager::add_not_found(const std::string& module_name) {
+   assert( !module_name.empty() );
+   if( not_found_.empty() )
+      not_found_ = module_name;
+   else
+      not_found_ = module_name + "->" + not_found_;
+}
+
 int
 Manager::elaborate( ModuleInstance* mod_inst ) {
    int res = 0;
@@ -139,8 +187,10 @@ Manager::elaborate( ModuleInstance* mod_inst ) {
    }
    ModuleSpec* avoid_endless = nullptr;
    while( !look_for.empty() ) {
-      if( avoid_endless == look_for.top() )
+      if( avoid_endless == look_for.top() ) {
+         add_not_found(avoid_endless->name());
          return 1;
+      }
       avoid_endless = look_for.top();
       for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
          current_comp_ = it->first;
@@ -148,9 +198,10 @@ Manager::elaborate( ModuleInstance* mod_inst ) {
             case Elaborator::FOUND:
                {
                   look_for.pop();
+                  // Here I should save the something for fast retrieve
                   res = elaborate( current_comp_->get_instance() );
                   if ( res ) {
-                     not_found_ = avoid_endless->name() + "->" + not_found_;
+                     add_not_found(avoid_endless->name());
                      return res;
                   }
                   break;
@@ -179,6 +230,7 @@ Manager::do_elaboration() {
       }
       return res;
    }
+   assert(not_found_.empty());
 
    // Can we go ahead?
    for( auto it = instances_.begin(); it != instances_.end(); ++it ) {
@@ -188,9 +240,7 @@ Manager::do_elaboration() {
    }
    // At least one compiler had a problem.
    if( !current_comp_->can_continue() ) {
-      auto it = instances_.find( reinterpret_cast<Compiler*>( current_comp_ ) );
-      assert( it != instances_.end() );
-      error_message();
+      error_message("can_continue() returned false");
       return 1;
    }
    // Emit code
@@ -198,7 +248,7 @@ Manager::do_elaboration() {
       current_comp_ = it->first;
       res = current_comp_->emit_code();
       if( res ) {
-         error_message("In emit_code");
+         error_message("In emit_code()");
          return res;
       }
    }
