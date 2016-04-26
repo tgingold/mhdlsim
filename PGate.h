@@ -204,7 +204,7 @@ class PGModule  : public PGate {
 
 	// If the module type is known by design, then use this
 	// constructor.
-      explicit PGModule(Module*type, perm_string name);
+      explicit PGModule(Module*type, perm_string name, bool = false);
 
       ~PGModule();
 
@@ -232,6 +232,7 @@ class PGModule  : public PGate {
       list<PExpr*>*overrides_;
       named<PExpr*>*pins_;
       unsigned npins_;
+      const bool is_mixed_;
 
 	// These members support parameter override by name
       named<PExpr*>*parms_;

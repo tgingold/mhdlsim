@@ -261,20 +261,20 @@ const char* PGBuiltin::gate_name() const
 
 PGModule::PGModule(perm_string type, perm_string name, list<PExpr*>*pins)
 : PGate(name, pins), bound_type_(0), type_(type), overrides_(0), pins_(0),
-  npins_(0), parms_(0), nparms_(0), msb_(0), lsb_(0)
+  npins_(0), is_mixed_(false), parms_(0), nparms_(0), msb_(0), lsb_(0)
 {
 }
 
 PGModule::PGModule(perm_string type, perm_string name,
 		   named<PExpr*>*pins, unsigned npins)
 : PGate(name, 0), bound_type_(0), type_(type), overrides_(0), pins_(pins),
-  npins_(npins), parms_(0), nparms_(0), msb_(0), lsb_(0)
+  npins_(npins), is_mixed_(false), parms_(0), nparms_(0), msb_(0), lsb_(0)
 {
 }
 
-PGModule::PGModule(Module*type, perm_string name)
+PGModule::PGModule(Module*type, perm_string name, bool is_mixed)
 : PGate(name, 0), bound_type_(type), overrides_(0), pins_(0),
-  npins_(0), parms_(0), nparms_(0), msb_(0), lsb_(0)
+  npins_(0), is_mixed_(is_mixed), parms_(0), nparms_(0), msb_(0), lsb_(0)
 {
 }
 
