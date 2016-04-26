@@ -21,8 +21,11 @@
 
 #include "module.h"
 #include "IcarusHandler.hpp"
-#include "netlist.h"
 #include "elaborator.h"
+#include "netlist.h"
+
+class PGModule;
+class Module;
 
 class IcarusElaborator : public virtual Elaborator, public virtual IcarusHandler {
    public:
@@ -33,13 +36,13 @@ class IcarusElaborator : public virtual Elaborator, public virtual IcarusHandler
       IcarusElaborator();
       virtual ~IcarusElaborator();
 
-      virtual ModuleSpec* elaborate(ModuleInstance* module);
+      virtual ModuleSpec* elaborate( ModuleInstance* module = nullptr );
 
       bool can_continue();
 
       int emit_code();
 
-      ModuleInstance* instantiate(const ModuleSpec& iface);
+      result instantiate( ModuleSpec& );
 
    protected:
       ///> Modules provided by this simulator instance. They can be instantiated
@@ -47,19 +50,32 @@ class IcarusElaborator : public virtual Elaborator, public virtual IcarusHandler
       ///> in its interface.
       std::map<const std::string, ModuleInterface> modules_;
 
-      IcarusElaborator::vhdl_strenght transform(ivl_drive_t type);
-      void transform(ivl_variable_type_t type);
-      IcarusElaborator::verilog_logic transform(vhdl_logic type);
+      ModuleSpec* create_spec( const PGModule*, NetScope* );
+      ModuleSpec* continue_elaboration( ModuleInstance* );
+      ModuleSpec* start_elaboration();
+      Module* mod_from_spec( ModuleSpec* );
+      inline void create_and_substitute_pgmodule( ModuleInstance*, NetScope* );
 
-      Design* des;
+      vhdl_strenght transform( ivl_drive_t );
+      void transform( ivl_variable_type_t type );
+      verilog_logic transform( vhdl_logic );
+      bool create_instance( ModuleSpec& );
+      void add_vpi_module( const char* );
+
+      Design* des_;
 
       // buf to remember where we got stuck
       //elaborator_work_item_t* cur;
 
       ///> Instances of modules handled by this simulator instance. The string key
       ///> is the name of an instance, not the name of the module.
-      std::map<const std::string, ModuleInstance> instances_;
+      std::map<const std::string, ModuleInstance*> instances_;
 
+   private:
+      vector<struct root_elem> root_elems;
+      vector<struct pack_elem> pack_elems;
+      map<string, const char*> f;
+      char *vpi_module_list;
 };
 
 #endif /* ICARUSELABORATOR_H */

@@ -28,6 +28,7 @@
 # include  <cstdlib>
 # include  <sstream>
 # include  "ivl_assert.h"
+# include "Module.h"
 
 class PExpr;
 
@@ -131,7 +132,8 @@ NetScope::NetScope(NetScope*up, const hname_t&n, NetScope::TYPE t, bool nest,
 	    time_prec_ = up->time_precision();
 	    time_from_timescale_ = up->time_from_timescale();
 	      // Need to check for duplicate names?
-	    up_->children_[name_] = this;
+       if(!dynamic_cast<FakeModule*>(this))
+        up_->children_[name_] = this;
       } else {
 	    need_const_func_ = false;
 	    is_const_func_ = false;
@@ -281,7 +283,7 @@ bool NetScope::auto_name(const char*prefix, char pad, const char* suffix)
 	      // Try this name...
 	    string tmp = use_prefix + suffix;
 	    hname_t new_name(lex_strings.make(tmp.c_str()), name_.peek_numbers());
-	    if (!up_->child(new_name)) {
+	    if (!up_->child(new_name) && !dynamic_cast<FakeModule*>(this)) {
 		    // Ah, this name is unique. Rename myself, and
 		    // change my name in the parent scope.
 		  name_ = new_name;

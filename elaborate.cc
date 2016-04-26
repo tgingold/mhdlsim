@@ -50,6 +50,9 @@
 # include  "ivl_assert.h"
 # include  "elaborate.hh"
 
+extern bool mixed_lang_enabled;
+extern std::map<perm_string, std::pair<const PGate*, NetScope*>> missing_specs;
+extern std::map<perm_string, Module*> fake_modules;
 
 void PGate::elaborate(Design*, NetScope*) const
 {
@@ -2214,6 +2217,9 @@ void PGModule::elaborate(Design*des, NetScope*scope) const
 	    return;
       }
 
+      if( mixed_lang_enabled ) {
+         return;
+      }
       cerr << get_fileline() << ": internal error: Unknown module type: " <<
 	    type_ << endl;
 }
@@ -2259,9 +2265,14 @@ void PGModule::elaborate_scope(Design*des, NetScope*sc) const
 
 	// Not a module or primitive that I know about or can find by
 	// any means, so give up.
-      cerr << get_fileline() << ": error: Unknown module type: " << type_ << endl;
-      missing_modules[type_] += 1;
-      des->errors += 1;
+      if( !mixed_lang_enabled ) {
+       cerr << get_fileline() << ": error: Unknown module type: " << type_ << endl;
+       missing_modules[type_] += 1;
+       des->errors += 1;
+       return;
+      }
+      assert(sc);
+      missing_specs[type_] = std::make_pair(this, sc);
 }
 
 
