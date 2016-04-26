@@ -19,25 +19,41 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "vvp_config.h"
 #include "simulator.h"
+#include <type_traits>
+#include <limits>
+
+class event_s;
 
 class IcarusSimulator : public virtual Simulator {
+   static_assert( std::numeric_limits<sim_time_t>::is_integer, "sim_time_t is not an integer type" );
+   static_assert( !std::numeric_limits<sim_time_t>::is_signed, "sim_time_t is signed" );
+   static_assert( sizeof(sim_time_t) >= sizeof(vvp_time64_t), "sim_time_t to vvp_time64_t conversion assumption is not met" );
    public:
-      IcarusSimulator() {};
-      virtual ~IcarusSimulator() {};
+      IcarusSimulator();
+      virtual ~IcarusSimulator();
 
-      virtual int initialize() { return 0; };
+      virtual int initialize();
 
-      virtual void notify(Net* ) {};
+      virtual void notify(Net* );
 
-      virtual int step_event() { return 0; };
+      virtual outcome step_event();
 
-      virtual sim_time_t next_event() const { return 0; };
+      virtual bool other_event();
 
-      virtual sim_time_t current_time() const { return 0; };
+      virtual sim_time_t next_event() const;
 
-      virtual int advance_time(sim_time_t ) { return 0; };
+      virtual sim_time_t current_time() const;
 
+      virtual void end_simulation();
+
+      virtual int advance_time(sim_time_t );
+
+   private:
+      vvp_time64_t schedule_time;
+      unsigned module_cnt;
+      const char*module_tab[64];
 };
 
 #endif /* ICARUSSIMULATOR_H */
