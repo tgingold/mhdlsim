@@ -83,8 +83,8 @@ vvp_code_t codespace_next(void)
 vvp_code_t codespace_allocate(void)
 {
       vvp_code_t res = codespace_next();
-      current_within_chunk += 1;
-      count_opcodes += 1;
+      ++current_within_chunk;
+      ++count_opcodes;
 
       memset(res, 0, sizeof(*res));
 

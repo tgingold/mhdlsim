@@ -49,32 +49,6 @@ void event_s::single_step_display(void)
       std::cerr << "event_s: Step into event " << typeid(*this).name() << std::endl;
 }
 
-struct event_time_s {
-      event_time_s() {
-	    count_time_events += 1;
-	    start = 0;
-	    active = 0;
-	    nbassign = 0;
-	    rwsync = 0;
-	    rosync = 0;
-	    del_thr = 0;
-	    next = NULL;
-      }
-      vvp_time64_t delay;
-
-      struct event_s*start;
-      struct event_s*active;
-      struct event_s*nbassign;
-      struct event_s*rwsync;
-      struct event_s*rosync;
-      struct event_s*del_thr;
-
-      struct event_time_s*next;
-
-      static void* operator new (size_t);
-      static void operator delete(void*obj, size_t s);
-};
-
 vvp_gen_event_s::~vvp_gen_event_s()
 {
 }
@@ -455,12 +429,13 @@ inline void event_time_s::operator delete(void*ptr, size_t)
 
 unsigned long count_time_pool(void) { return event_time_heap.pool; }
 
+
 /*
  * This is the head of the list of pending events. This includes all
  * the events that have not been executed yet, and reaches into the
  * future.
  */
-static struct event_time_s* sched_list = 0;
+struct event_time_s* sched_list = 0;
 
 /*
  * This is a list of initialization events. The setup puts
@@ -468,7 +443,7 @@ static struct event_time_s* sched_list = 0;
  * simulation as a whole starts. This prevents time-0 triggers of
  * certain events.
  */
-static struct event_s* schedule_init_list = 0;
+struct event_s* schedule_init_list = 0;
 
 /*
  * This is the head of the list of final events.
@@ -889,7 +864,7 @@ void schedule_generic(vvp_gen_event_t obj, vvp_time64_t delay,
 	    vthread_delay_delete();
 }
 
-static bool sim_started;
+bool sim_started;
 
 void schedule_functor(vvp_gen_event_t obj)
 {
