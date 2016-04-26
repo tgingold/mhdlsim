@@ -5668,6 +5668,11 @@ bool Module::elaborate(Design*des, NetScope*scope) const
       return result_flag;
 }
 
+bool FakeModule::elaborate(Design*des, NetScope*scope) const
+{
+      return true;
+}
+
 /*
  * Elaborating a netclass_t means elaborating the PFunction and PTask
  * objects that it contains. The scopes and signals have already been
@@ -5839,8 +5844,9 @@ bool PGenerate::elaborate_(Design*des, NetScope*scope) const
       elaborate_tasks(des, scope, tasks);
 
       typedef list<PGate*>::const_iterator gates_it_t;
-      for (gates_it_t cur = gates.begin() ; cur != gates.end() ; ++ cur )
+      for (gates_it_t cur = gates.begin() ; cur != gates.end() ; ++ cur ){
 	    (*cur)->elaborate(des, scope);
+      }
 
       typedef list<PProcess*>::const_iterator proc_it_t;
       for (proc_it_t cur = behaviors.begin(); cur != behaviors.end(); ++ cur )

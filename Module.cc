@@ -41,6 +41,39 @@ Module::Module(LexicalScope*parent, perm_string n)
       time_from_timescale = false;
 }
 
+FakeModule::FakeModule(LexicalScope*parent, perm_string n)
+: Module(parent, n)
+{
+      library_flag = false;
+      is_cell = false;
+      is_interface = false;
+      program_block = false;
+      uc_drive = UCD_NONE;
+      timescale_warn_done = false;
+      time_unit = 0;
+      time_precision = 0;
+      time_from_timescale = false;
+}
+
+FakeModule::~FakeModule()
+{
+}
+
+void
+FakeModule::remove_gate( perm_string to_remove ) {
+   for(auto it = gates_.begin();
+         it != gates_.end();
+         ++it) {
+      if( (*it)->get_name() == to_remove ) {
+         PGate *to_delete = *it;
+         assert(to_delete);
+         gates_.erase(it);
+         delete to_delete;
+         break;
+      }
+   }
+}
+
 Module::~Module()
 {
 }

@@ -973,6 +973,17 @@ bool Module::elaborate_scope(Design*des, NetScope*scope,
       return des->errors == 0;
 }
 
+bool FakeModule::elaborate_scope(Design*des, NetScope*scope,
+			     const replace_t&replacements)
+{
+      if (debug_scopes) {
+	    cerr << get_fileline() << ": FakeMod::elaborate_scope: "
+		 << "Elaborate " << scope_path(scope) << "." << endl;
+      }
+
+      return des->errors == 0;
+}
+
 bool PGenerate::generate_scope(Design*des, NetScope*container)
 {
       switch (scheme_type) {

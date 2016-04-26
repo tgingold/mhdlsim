@@ -159,20 +159,46 @@ class Module : public PScopeExtra, public LineInfo {
       const list<PGate*>& get_gates() const;
 
       void dump(ostream&out) const;
-      bool elaborate(Design*, NetScope*scope) const;
+      virtual bool elaborate(Design*, NetScope*scope) const;
 
       typedef map<perm_string,PExpr*> replace_t;
-      bool elaborate_scope(Design*, NetScope*scope, const replace_t&rep);
+      virtual bool elaborate_scope(Design*, NetScope*scope, const replace_t&rep);
 
       bool elaborate_sig(Design*, NetScope*scope) const;
 
+    protected:
+      list<PGate*> gates_;
     private:
       void dump_specparams_(ostream&out, unsigned indent) const;
-      list<PGate*> gates_;
 
     private: // Not implemented
       Module(const Module&);
       Module& operator= (const Module&);
 };
+
+// Fake module for mixed sim.
+class FakeModule : public Module {
+
+    public:
+	/* The name passed here is the module name, not the instance
+	   name. This name must be a permallocated string. */
+      explicit FakeModule(LexicalScope*parent, perm_string name);
+      ~FakeModule();
+
+      //void dump(ostream&out) const override;
+      void remove_gate( perm_string to_remove );
+      bool elaborate(Design*, NetScope*scope) const override;
+
+      typedef map<perm_string,PExpr*> replace_t;
+      bool elaborate_scope(Design*, NetScope*scope, const replace_t&rep) override;
+
+      //bool elaborate_sig(Design*, NetScope*scope) const override;
+
+    private: // Not implemented
+      FakeModule(const FakeModule&);
+      FakeModule& operator= (const FakeModule&);
+};
+
+static_assert(sizeof(Module) == sizeof(FakeModule), "YOU SHALL NOT PASS: add members only if you know what you are doing.");
 
 #endif /* IVL_Module_H */
