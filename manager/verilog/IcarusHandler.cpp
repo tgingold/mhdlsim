@@ -20,7 +20,7 @@
 #include "compiler.h"
 #include <cassert>
 
-bool debug_elaborate;
+bool debug_elaborate = true;
 bool warn_ob_select = false;
 unsigned integer_width = 32;
 unsigned width_cap = 65536;
@@ -89,11 +89,11 @@ map<perm_string,bool> library_file_map;
 /*
  * Debug message class flags.
  */
-bool debug_scopes = false;
-bool debug_eval_tree = false;
-bool debug_emit = false;
-bool debug_synth2 = false;
-bool debug_optimizer = false;
+bool debug_scopes = true;
+bool debug_eval_tree = true;
+bool debug_emit = true;
+bool debug_synth2 = true;
+bool debug_optimizer = true;
 
 /*
  * Keep a heap of identifier strings that I encounter. This is a more

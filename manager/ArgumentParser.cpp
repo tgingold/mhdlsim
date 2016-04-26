@@ -35,6 +35,8 @@ ArgumentParser::ArgumentParser(bool complainAndExitOnError)
    analyze_(false),
    version_(false),
    verbose_(false) {
+      // FIXME: This flag is set to true just for testing PURPOSE
+      mixed_lang_enabled = true;
    }
 
 ArgumentParser::~ArgumentParser() {}
