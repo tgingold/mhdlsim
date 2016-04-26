@@ -1,3 +1,6 @@
+#ifndef NET_H
+#define NET_H
+
 /*
  * Copyright (c) 2016 CERN
  * @author Maciej Suminski <maciej.suminski@cern.ch>
@@ -17,8 +20,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NET_H
-#define NET_H
+#include <vector>
+#include <cassert>
 
 /**
  * @brief Class that represents a connection between modules.

@@ -19,6 +19,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <limits>
+
 ///> Universal simulation time unit.
 typedef unsigned long long sim_time_t;
 
@@ -26,6 +28,13 @@ class Net;
 
 class Simulator {
 public:
+    /* CHANGED means that the input of a module that the simulator instance does not handle has changed and therefore the other simulator need to be adviced
+     * OK the step went fine and the manager can decide what to do afterwards
+     * ERROR something went terribly wrong. Need to exit.
+     */
+    enum outcome { OK, CHANGED, ERROR };
+    static constexpr sim_time_t maxSimValue() { return std::numeric_limits<sim_time_t>::max(); };
+    static constexpr sim_time_t minSimValue() { return std::numeric_limits<sim_time_t>::min(); };
     Simulator() {};
     virtual ~Simulator() {};
 
@@ -45,7 +54,7 @@ public:
      * @brief Executes the next event from the event queue.
      * @return 0 if success. Non zero value in case of failure.
      */
-    virtual int step_event() = 0;
+    virtual outcome step_event() = 0;
 
     /**
      * @brief If some tasks need to be executed after simulation,
@@ -54,6 +63,11 @@ public:
      * during simulation in order to cleanup.
      */
     virtual void end_simulation() = 0;
+
+    /**
+     * @brief
+     */
+    virtual bool other_event() = 0;
 
     /**
      * @brief Returns the timestamp of the next event in the event queue.
