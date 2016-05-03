@@ -1,9 +1,8 @@
-#ifndef HANDLER_H
-#define HANDLER_H
+#ifndef GHDLANALYZER_H
+#define GHDLANALYZER_H
 
 /*
  * Copyright (c) 2016 CERN
- * @author Michele Castellana <michele.castellana@cern.ch>
  *
  * This source code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +18,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <set>
-#include <vector>
-#include <string>
+#include "analyzer.h"
+#include "GhdlHandler.hpp"
 
-/**
- * @brief Just a class to manage the parameters and the file list.
- */
-class FileParamHandler {
-   public:
-      FileParamHandler() {};
-      virtual ~FileParamHandler() {};
+class GhdlAnalyzer : public virtual Analyzer, public virtual GhdlHandler {
+public:
+    GhdlAnalyzer();
+    virtual ~GhdlAnalyzer();
 
-      /**
-       * @brief Add file(s).
-       */
-      virtual void add_files( std::vector<std::string>& ) = 0;
-      virtual void add_file( const std::string& ) = 0;
-
-      virtual void processParams( std::vector<std::string>& ) = 0;
+    int analyze();
 };
 
-#endif /* HANDLER_H */
+#endif /* GHDLANALYZER_H */

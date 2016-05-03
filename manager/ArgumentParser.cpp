@@ -139,7 +139,6 @@ ArgumentParser::translate_parameters() {
       return;
    }
    if( analyze_ ) {
-      VHDLParams_.emplace_back("-a");
       verilogParams_.emplace_back("-E");
    }
    if( verbose_ ) {

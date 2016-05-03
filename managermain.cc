@@ -21,13 +21,14 @@
 #include "compiler.h"
 #include "manager.h"
 #include "IcarusCompiler.hpp"
+#include "GhdlCompiler.hpp"
 #include "ArgumentParser.hpp"
 #include <boost/scoped_ptr.hpp>
 
 int main( int argc, char*argv[] )
 {
-   //Compiler* vhdl = new GHDLCompiler();
    boost::scoped_ptr<Compiler> verilog( new IcarusCompiler() );
+   boost::scoped_ptr<Compiler> vhdl( new GhdlCompiler() );
    ArgumentParser ap;
    switch( ap.vectorifyArguments( argc, argv ) ) {
       case ArgumentParser::CONTINUE_OK:
@@ -36,7 +37,7 @@ int main( int argc, char*argv[] )
          // Pass flags to compilers and exit.
          // I expect compilers to print something and do no computation at all
          verilog->processParams( ap.getVerilogParams() );
-         //vhdl.processParam(ap.getVHDLParams());
+	 vhdl->processParams( ap.getVHDLParams() );
          return EXIT_SUCCESS;
          break;
       case ArgumentParser::ERROR:
@@ -49,22 +50,19 @@ int main( int argc, char*argv[] )
 
    Manager dumbledore;
 
-   //if( ap.getVHDLFiles().size() ) {
-      //vhdl.add_files( ap.getVHDLFiles() );
-      //vhdl.processParam( ap.getVHDLParams() );
-      //dumbledore.add_instance( Compiler::Type::VHDL, vhdl );
-   //}
+   if( ap.getVHDLFiles().size() ) {
+      vhdl->add_files( ap.getVHDLFiles() );
+      vhdl->processParams( ap.getVHDLParams() );
+      dumbledore.add_instance( Compiler::VHDL, vhdl.get() );
+   }
 
    if( ap.getVerilogFiles().size() ) {
       verilog->add_files( ap.getVerilogFiles() );
       verilog->processParams( ap.getVerilogParams() );
-      dumbledore.add_instance( Compiler::Type::VERILOG, verilog.get() );
+      dumbledore.add_instance( Compiler::VERILOG, verilog.get() );
    }
 
    int result = dumbledore.run( ap.getCompType() );
-
-   // cleanup
-   //delete vhdl;
 
    if( result ) {
       return EXIT_FAILURE;

@@ -1,9 +1,8 @@
-#ifndef HANDLER_H
-#define HANDLER_H
+#ifndef GHDLSIMULATOR_H
+#define GHDLSIMULATOR_H
 
 /*
  * Copyright (c) 2016 CERN
- * @author Michele Castellana <michele.castellana@cern.ch>
  *
  * This source code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +18,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <set>
-#include <vector>
-#include <string>
+#include "simulator.h"
 
-/**
- * @brief Just a class to manage the parameters and the file list.
- */
-class FileParamHandler {
+class GhdlSimulator : public virtual Simulator {
    public:
-      FileParamHandler() {};
-      virtual ~FileParamHandler() {};
+      GhdlSimulator();
+      virtual ~GhdlSimulator();
 
-      /**
-       * @brief Add file(s).
-       */
-      virtual void add_files( std::vector<std::string>& ) = 0;
-      virtual void add_file( const std::string& ) = 0;
+      virtual int initialize();
 
-      virtual void processParams( std::vector<std::string>& ) = 0;
+      virtual void notify(Net* );
+
+      virtual outcome step_event();
+
+      virtual void end_simulation();
+
+      virtual bool other_event();
+
+      virtual sim_time_t next_event() const;
+
+      virtual sim_time_t current_time() const;
+
+      virtual int advance_time(sim_time_t );
+
 };
 
-#endif /* HANDLER_H */
+#endif /* GHDLSIMULATOR_H */

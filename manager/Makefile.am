@@ -31,7 +31,12 @@ libinterface_la_SOURCES = \
    verilog/IcarusElaborator.cpp \
    verilog/IcarusHandler.cpp \
    verilog/IcarusAnalyzer.cpp \
-   manager.cpp
+   vhdl/GhdlCompiler.cpp \
+   vhdl/GhdlHandler.cpp \
+   vhdl/GhdlAnalyzer.cpp \
+   vhdl/GhdlElaborator.cpp \
+   vhdl/GhdlSimulator.cpp \
+  manager.cpp
 
 libinterface_la_LIBADD = \
 	$(top_builddir)/ivlpp/libivlpp.la \

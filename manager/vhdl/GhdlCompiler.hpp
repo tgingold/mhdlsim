@@ -1,9 +1,8 @@
-#ifndef HANDLER_H
-#define HANDLER_H
+#ifndef GHDLIMPL_H
+#define GHDLIMPL_H
 
 /*
  * Copyright (c) 2016 CERN
- * @author Michele Castellana <michele.castellana@cern.ch>
  *
  * This source code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +18,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <set>
-#include <vector>
-#include <string>
+#include "GhdlElaborator.hpp"
+#include "GhdlSimulator.hpp"
+#include "GhdlAnalyzer.hpp"
+#include "compiler_interface.h"
 
 /**
- * @brief Just a class to manage the parameters and the file list.
+ * @brief Class that represents a single compiler instance. Ghdl and Icarus
+ * have to provide such interface.
  */
-class FileParamHandler {
-   public:
-      FileParamHandler() {};
-      virtual ~FileParamHandler() {};
+class GhdlCompiler : public GhdlAnalyzer, public GhdlElaborator, public GhdlSimulator, public Compiler {
+public:
+    GhdlCompiler();
+    virtual ~GhdlCompiler();
 
-      /**
-       * @brief Add file(s).
-       */
-      virtual void add_files( std::vector<std::string>& ) = 0;
-      virtual void add_file( const std::string& ) = 0;
-
-      virtual void processParams( std::vector<std::string>& ) = 0;
 };
 
-#endif /* HANDLER_H */
+#endif /* GHDLIMPL_H */

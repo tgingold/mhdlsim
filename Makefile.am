@@ -148,7 +148,8 @@ bin_PROGRAMS = mixedmanager
 mixedmanager_CPPFLAGS = \
    -I$(top_srcdir)/manager \
    -I$(top_srcdir)/libmisc \
-   -I$(top_srcdir)/manager/verilog
+   -I$(top_srcdir)/manager/verilog \
+   -I$(top_srcdir)/manager/vhdl
 
 mixedmanager_SOURCES = \
 	managermain.cc \

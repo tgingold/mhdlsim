@@ -1,9 +1,5 @@
-#ifndef HANDLER_H
-#define HANDLER_H
-
 /*
  * Copyright (c) 2016 CERN
- * @author Michele Castellana <michele.castellana@cern.ch>
  *
  * This source code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +15,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <set>
-#include <vector>
+#include "GhdlAnalyzer.hpp"
+#include "ghdl.h"
+#include <iostream>
+#include <cassert>
 #include <string>
 
-/**
- * @brief Just a class to manage the parameters and the file list.
- */
-class FileParamHandler {
-   public:
-      FileParamHandler() {};
-      virtual ~FileParamHandler() {};
 
-      /**
-       * @brief Add file(s).
-       */
-      virtual void add_files( std::vector<std::string>& ) = 0;
-      virtual void add_file( const std::string& ) = 0;
+GhdlAnalyzer::GhdlAnalyzer() {}
 
-      virtual void processParams( std::vector<std::string>& ) = 0;
-};
+GhdlAnalyzer::~GhdlAnalyzer() {}
 
-#endif /* HANDLER_H */
+int
+GhdlAnalyzer::analyze() {
+   assert( files_.size() );
+
+   mhdlsim_vhdl_analyze_init();
+
+   for(auto it = files_.begin(); it != files_.end(); it++) {
+     int result = mhdlsim_vhdl_analyze_file(it->c_str(), it->size());
+     if (result) {
+       std::cerr << "Analyze error!" << std::endl;
+       return result;
+     }
+   }
+
+   return 0;
+}
